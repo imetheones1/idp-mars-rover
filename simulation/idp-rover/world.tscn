@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://bjvndbyb8tpv3"]
+[gd_scene load_steps=6 format=3 uid="uid://bjvndbyb8tpv3"]
 
 [ext_resource type="Texture2D" uid="uid://d36er7hb12i7x" path="res://textures/prototype/Vector/texture_01.svg" id="1_f3sb7"]
-[ext_resource type="PackedScene" uid="uid://crm2nhxk0k6pa" path="res://rover.tscn" id="2_fj7yv"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_f3sb7"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -33,9 +32,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3630204, 0.46207392, 2.542
 use_collision = true
 size = Vector3(100, 0.5, 100)
 material = SubResource("StandardMaterial3D_fj7yv")
-
-[node name="rover" parent="." instance=ExtResource("2_fj7yv")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8774912, 0)
-
-[node name="Camera3D" type="Camera3D" parent="rover"]
-transform = Transform3D(-0.99943274, 0, -0.033678513, -0.020834005, 0.78569496, 0.61826324, 0.026461039, 0.61861414, -0.7852493, 0, 1.8038223, -2.1165473)
