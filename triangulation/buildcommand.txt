@@ -1,1 +1,1 @@
-gcc triangulation/triangulate.c -o triangulation/triangulate.exe -lSDL3
+gcc triangulation/render.c triangulation/triangulation.c -o triangulation/render.exe -lSDL3

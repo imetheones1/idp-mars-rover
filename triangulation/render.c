@@ -1,10 +1,5 @@
 #include <SDL3/SDL.h>
-
-typedef struct vec3 {
-    double x;
-    double y;
-    double z;
-} vec3;
+#include "triangle_types.h"
 
 typedef struct mat4 {
     double m[4][4];
@@ -160,6 +155,8 @@ int main() {
 
         if (w&&!s) pitch += dt;
         else if (s&&!w) pitch -= dt;
+
+        pitch = SDL_clamp(pitch,-1,1);
 
         if (a&&!d) yaw += dt;
         else if (d&&!a) yaw -= dt;

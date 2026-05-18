@@ -1,0 +1,24 @@
+#ifndef TRIANGLE_TYPES_H_
+#define TRIANGLE_TYPES_H_
+
+#include <stdint.h>
+
+typedef struct vec3 {
+    double x;
+    double y;
+    double z;
+} vec3;
+
+typedef struct triangle {
+    size_t i0;
+    size_t i1;
+    size_t i2;
+} triangle;
+
+typedef struct triangle_list_node {
+    triangle triangle;
+    struct triangle_list_node *next;
+    struct triangle_list_node *prev;
+} triangle_list_node;
+
+#endif
