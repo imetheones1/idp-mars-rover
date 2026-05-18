@@ -21,4 +21,11 @@ typedef struct triangle_list_node {
     struct triangle_list_node *prev;
 } triangle_list_node;
 
+typedef struct edge {
+    size_t i0;
+    size_t i1;
+} edge;
+
+triangle_list_node* triangulate_vertices(vec3 *vertices, size_t vertex_count);
+
 #endif

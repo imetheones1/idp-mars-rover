@@ -85,7 +85,11 @@ static int window_height= 600;
 static SDL_Window *window;
 static SDL_Renderer *renderer;
 
-#define test_vertex_count 20
+#define test_vertex_count 5000
+
+static double calculate_test_terrain_height(double x, double z) {
+    return (SDL_sin(3*x) + SDL_sin(5*z))*0.1;
+}
 
 int main() {
     bool result;
@@ -95,11 +99,13 @@ int main() {
     for (size_t i = 0; i < test_vertex_count; i++){
         vec3 cur = {
             .x = SDL_randf()*2 - 1,
-            .y = 0,//SDL_randf()*0.5 - 0.25,
             .z = SDL_randf()*2 - 1
         };
+        cur.y = calculate_test_terrain_height(cur.x,cur.z);
         push_vertex(cur);
     }
+
+    triangle_list_node *triangles = triangulate_vertices(vertices,test_vertex_count);
 
     result = SDL_Init(SDL_INIT_VIDEO);
     if (!result) {
@@ -178,6 +184,10 @@ int main() {
 
         SDL_SetRenderDrawColor(renderer,255,255,255,255);
 
+        double *projected_x = SDL_malloc(vertex_count * sizeof(double));
+        double *projected_y = SDL_malloc(vertex_count * sizeof(double));
+        bool *valid = SDL_calloc(vertex_count * sizeof(bool), sizeof(bool));
+
         for (size_t i = 0; i < vertex_count; i++) {
             vec3 cur = transformed[i];
             if (cur.z > -0.01) continue;
@@ -185,9 +195,27 @@ int main() {
             double x = (cur.x*inv_z +0.5) * window_width;
             double y = (cur.y*inv_z +0.5) * window_height;
             SDL_RenderPoint(renderer,x,y);
+            projected_x[i] = x;
+            projected_y[i] = y;
+            valid[i] = true;
         }
 
+        triangle_list_node *curr = triangles;
+        do {
+            int i0 = curr->triangle.i0;
+            int i1 = curr->triangle.i1;
+            int i2 = curr->triangle.i2;
+            if (!valid[i0]||!valid[i1]||!valid[i2]) continue;
+            SDL_RenderLine(renderer,projected_x[i0],projected_y[i0],projected_x[i1],projected_y[i1]);
+            SDL_RenderLine(renderer,projected_x[i1],projected_y[i1],projected_x[i2],projected_y[i2]);
+            SDL_RenderLine(renderer,projected_x[i0],projected_y[i0],projected_x[i2],projected_y[i2]);
+            curr = curr->next;
+        } while (curr);
+
         SDL_free(transformed);
+        SDL_free(projected_x);
+        SDL_free(projected_y);
+        SDL_free(valid);
 
         SDL_RenderPresent(renderer);
 
