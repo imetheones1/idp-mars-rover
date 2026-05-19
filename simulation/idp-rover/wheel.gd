@@ -45,8 +45,12 @@ func calculate_force() -> Vector3:
 	var horizontal_speed = wheel_point_velocity.dot(global_basis.x)
 	
 	var horizontal_friction_force = -global_basis.x * horizontal_speed * 0.95
+	
+	# forward force
+	var forward_speed = wheel_point_velocity.dot(-global_basis.z)
+	var forward_friction_force = global_basis.z * (forward_speed-cur_speed) * 0.95
 
-	return compression_force - global_basis.z * cur_speed + horizontal_friction_force
+	return compression_force + forward_friction_force + horizontal_friction_force
 
 
 # Helper function to find 3D velocity of any global point on a RigidBody3D
