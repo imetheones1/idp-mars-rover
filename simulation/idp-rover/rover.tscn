@@ -27,6 +27,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.0253817)
 mesh = SubResource("QuadMesh_44p52")
 
 [node name="wheels" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36697334, 0)
 
 [node name="fl" parent="wheels" node_paths=PackedStringArray("car_body") instance=ExtResource("1_8cnl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, -1)

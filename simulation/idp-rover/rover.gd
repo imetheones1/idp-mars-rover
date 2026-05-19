@@ -16,5 +16,10 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	var cur_speed = Input.get_axis("ui_down","ui_up") * 10
-	for wheel: Wheel in wheels.get_children():
-		wheel.cur_speed = cur_speed
+	#for wheel: Wheel in wheels.get_children():
+		#wheel.cur_speed = cur_speed
+	$wheels/fl.cur_speed = cur_speed
+	$wheels/fr.cur_speed = cur_speed
+	var cur_dir = Input.get_axis("ui_right","ui_left") * 20
+	$wheels/fl.rotation_degrees.y = cur_dir
+	$wheels/fr.rotation_degrees.y = cur_dir

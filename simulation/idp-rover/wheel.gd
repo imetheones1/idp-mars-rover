@@ -8,12 +8,14 @@ extends RayCast3D
 
 @export var cur_speed := 0.0
 
-var spring_stiffness: float = 100.0
+var spring_stiffness: float = 150.0
 var damping_coefficient: float = 5.0
 
 func calculate_force() -> Vector3:
 	if not is_colliding():
 		return Vector3.ZERO
+	
+	# compression force
 
 	var hit_point = get_collision_point()
 	var normal = get_collision_normal()
@@ -35,8 +37,16 @@ func calculate_force() -> Vector3:
 	var force_magnitude = spring_force - damping_force
 
 	force_magnitude = clamp(force_magnitude, 0.0, (car_body.get_gravity()*car_body.mass).length_squared()) 
+	
+	var compression_force:Vector3 = normal * force_magnitude
+	
+	# horizontal friction
+	
+	var horizontal_speed = wheel_point_velocity.dot(global_basis.x)
+	
+	var horizontal_friction_force = -global_basis.x * horizontal_speed * 0.95
 
-	return normal * force_magnitude - global_basis.z * cur_speed
+	return compression_force - global_basis.z * cur_speed + horizontal_friction_force
 
 
 # Helper function to find 3D velocity of any global point on a RigidBody3D
