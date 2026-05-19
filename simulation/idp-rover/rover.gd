@@ -57,7 +57,7 @@ func _on_timer_timeout() -> void:
 		if valid:
 			terrain_points.append(collision_point)
 			new_point_count+=1
-	print_debug("new points: ",new_point_count)
+	print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
 	distance_timer.start()
 
 func write_terrain_to_file():
