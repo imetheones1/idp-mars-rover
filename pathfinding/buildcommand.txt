@@ -1,0 +1,3 @@
+gcc pathfinding/pathfind.c -o pathfinding/pathfind.exe
+
+pathfinding/pathfind.exe "C:\Users\zacha\Documents\programms\idp-mars-rover\triangulation\test.roverheightmap" hi

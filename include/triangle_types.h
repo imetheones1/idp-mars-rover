@@ -35,4 +35,6 @@ triangle_list_node* triangulate_vertices(vec3 *vertices, size_t vertex_count);
 
 vec3_list load_vertices(char *path);
 
+#define pixel_size 0.5
+
 #endif

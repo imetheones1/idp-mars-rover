@@ -61,6 +61,7 @@ func _on_timer_timeout() -> void:
 	distance_timer.start()
 
 func write_terrain_to_file():
+	print_debug("\nbeginning everything")
 	var app_dir = "user://vertices.txt"
 	var file := FileAccess.open(app_dir,FileAccess.WRITE)
 	var cur_string := ""
@@ -76,5 +77,54 @@ func write_terrain_to_file():
 		elif line.length() != line_length:
 			print_debug("lines are different sizes!")
 	file.store_string(cur_string)
-	print("path: "+file.get_path_absolute())
+	var vertex_file_path = file.get_path_absolute()
+	file.close()
+	print("path: "+vertex_file_path)
 	print("line length: "+str(line_length))
+	var temp_file := FileAccess.open("user://heightmap.roverheightmap",FileAccess.WRITE)
+	var heightmap_path := temp_file.get_path_absolute()
+	temp_file.close()
+	print("output path: "+heightmap_path)
+	
+	# execute programs
+	var output = []
+	#var exit_code = OS.execute(
+		#"C:/Users/zacha/Documents/programms/idp-mars-rover/triangulation/heightmap.exe",
+		#[vertex_file_path, heightmap_path],
+		#output,
+		#true
+	#)
+	# todo find out why powershell is needed
+	var command = "\"C:/Users/zacha/Documents/programms/idp-mars-rover/triangulation/heightmap.exe %s %s\"" % [vertex_file_path,heightmap_path]
+	print("command: ",command)
+	OS.execute("powershell.exe",["-Command",command],output,true)
+	#print("exit code: ",exit_code)
+	var real_output = ""
+	for out:String in output:
+		for line in out.split("\n"):
+			real_output=line
+			if line.contains("Point"):
+				continue
+			print(line)
+	if not real_output.begins_with("run"): # todo come up with something better
+		print_debug("super fail!")
+		return
+	
+	var temp_file_2 := FileAccess.open("user://path.roverpath",FileAccess.WRITE)
+	var path_path := temp_file_2.get_path_absolute()
+	temp_file_2.close()
+	print("path path: "+path_path)
+	
+	var command_2 = "\"C:/Users/zacha/Documents/programms/idp-mars-rover/pathfinding/pathfind.exe %s %s\"" % [heightmap_path,path_path]
+	output = []
+	OS.execute("powershell.exe",["-Command",command_2],output,true)
+	real_output = ""
+	for out:String in output:
+		for line in out.split("\n"):
+			real_output=line
+			print(line)
+	if not real_output.begins_with("success"):
+		print_debug("super fail 2!")
+		return
+	
+	print()

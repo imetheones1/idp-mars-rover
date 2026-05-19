@@ -1,5 +1,5 @@
 #include <SDL3/SDL.h>
-#include "triangle_types.h"
+#include "../include/triangle_types.h"
 
 typedef struct mat4 {
     double m[4][4];

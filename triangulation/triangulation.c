@@ -1,4 +1,4 @@
-#include "triangle_types.h"
+#include "../include/triangle_types.h"
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>

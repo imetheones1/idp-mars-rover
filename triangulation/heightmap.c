@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <float.h>
-#include "triangle_types.h"
+#include "../include/triangle_types.h"
 
 #define LINE_LEN 51
 
@@ -57,6 +57,9 @@ vec3_list load_vertices(char *path){
 }
 
 bool sample_triangle_height(vec3 p0, vec3 p1, vec3 p2, double x, double z, double *out_y) {
+    if ((x>p0.x&&x>p1.x&&x>p2.x)||(x<p0.x&&x<p1.x&&x<p2.x)||(z>p0.z&&z>p1.z&&z>p2.z)||(z<p0.z&&z<p1.z&&z<p2.z)){
+        return false;
+    }
     double det = (p1.z - p2.z) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.z - p2.z);
     
     if (det == 0.0) return false;
@@ -74,14 +77,16 @@ bool sample_triangle_height(vec3 p0, vec3 p1, vec3 p2, double x, double z, doubl
     return false;
 }
 
-#define pixel_size 0.5
-
 int main(int argc, char *argv[]) {
 
     // C:/Users/zacha/AppData/Roaming/Godot/app_userdata/idp rover/vertices.txt
 
     if (argc != 3) {
-        printf("usage: %s input_file output_file",argv[0]);
+        printf("usage: %s input_file output_file\n",argv[0]);
+        printf("inputted args: %d\n",argc);
+        for (int i = 0; i < argc; i++){
+            printf("%d: %s\n",i+1,argv[i]);
+        }
         exit(EXIT_FAILURE);
     }
 
@@ -187,6 +192,26 @@ int main(int argc, char *argv[]) {
 
     printf("\nrun: ffmpeg -i %s %s.png",output_image_path,output_image_path);
     // printf("hi");
+
+    FILE *out_file = fopen(argv[2], "wb");
+    if (!out_file) {
+        printf("error opening file for writing");
+        return 1;
+    }
+
+    const char magic[4] = {'r', 'v', 'h', 'p'};
+    fwrite(magic, sizeof(char), 4, out_file);
+
+    fwrite(&min_x,sizeof(double),1,out_file);
+    fwrite(&min_z,sizeof(double),1,out_file);
+
+    fwrite(&width, sizeof(int32_t), 1, out_file);
+    fwrite(&height, sizeof(int32_t), 1, out_file);
+
+    size_t total_elements = (size_t)width * (size_t)height;
+    size_t written = fwrite(heightmap, sizeof(double), total_elements, out_file);
+
+    fclose(out_file);
     
     return 0;
 }
