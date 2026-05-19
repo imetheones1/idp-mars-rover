@@ -1,4 +1,3 @@
-@tool
 class_name Wheel
 extends RayCast3D
 
@@ -44,11 +43,11 @@ func calculate_force() -> Vector3:
 	
 	var horizontal_speed = wheel_point_velocity.dot(global_basis.x)
 	
-	var horizontal_friction_force = -global_basis.x * horizontal_speed * 0.95
+	var horizontal_friction_force = -global_basis.x * horizontal_speed
 	
 	# forward force
 	var forward_speed = wheel_point_velocity.dot(-global_basis.z)
-	var forward_friction_force = global_basis.z * (forward_speed-cur_speed) * 0.95
+	var forward_friction_force = global_basis.z * (forward_speed-cur_speed)
 
 	return compression_force + forward_friction_force + horizontal_friction_force
 

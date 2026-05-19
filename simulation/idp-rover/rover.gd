@@ -2,6 +2,9 @@ extends RigidBody3D
 
 @onready var wheels: Node3D = $wheels
 
+func damp(a,b,lambda:float,dt:float):
+	return lerp(a,b, 1-exp(-lambda * dt))
+
 func _physics_process(delta: float) -> void:
 	var flip := Input.is_action_just_pressed("ui_accept")
 	for wheel: Wheel in wheels.get_children():
@@ -17,12 +20,16 @@ func _physics_process(delta: float) -> void:
 func _ready() -> void:
 	pass # Replace with function body.
 
+var cur_speed := 0.0
+var cur_dir := 0.0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	var cur_speed = Input.get_axis("ui_down","ui_up") * 10
+	var in_speed = Input.get_axis("ui_down","ui_up") * 10
+	cur_speed = damp(cur_speed,in_speed,0.99,delta)
 	for wheel: Wheel in wheels.get_children():
 		wheel.cur_speed = cur_speed
-	var cur_dir = Input.get_axis("ui_right","ui_left") * 60
+	var in_dir = Input.get_axis("ui_right","ui_left") * 60
+	cur_dir = move_toward(cur_dir,in_dir,delta*250)
 	$wheels/fl.rotation_degrees.y = cur_dir
 	$wheels/fr.rotation_degrees.y = cur_dir
