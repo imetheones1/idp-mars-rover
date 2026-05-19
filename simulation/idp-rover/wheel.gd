@@ -48,8 +48,18 @@ func calculate_force() -> Vector3:
 	# forward force
 	var forward_speed = wheel_point_velocity.dot(-global_basis.z)
 	var forward_friction_force = global_basis.z * (forward_speed-cur_speed)
+	
+	# gravity compensation
+	var gravity_force = car_body.get_gravity() * car_body.mass
 
-	return compression_force + forward_friction_force + horizontal_friction_force
+	var gravity_parallel = gravity_force - normal * gravity_force.dot(normal)
+
+	var anti_slide_force := Vector3.ZERO
+
+	if gravity_parallel.length() > 0.0:
+		anti_slide_force = -gravity_parallel*0.25
+
+	return compression_force + forward_friction_force + horizontal_friction_force + anti_slide_force
 
 
 # Helper function to find 3D velocity of any global point on a RigidBody3D
