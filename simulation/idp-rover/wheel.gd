@@ -22,10 +22,7 @@ func calculate_force() -> Vector3:
 	var dist = global_position.distance_to(hit_point)
 
 	var compression = radius - dist
-
-	if compression <= 0.0:
-		return Vector3.ZERO
-
+	
 	var wheel_point_velocity = get_point_velocity(global_position)
 	
 	var compression_velocity = wheel_point_velocity.dot(normal)
@@ -33,11 +30,14 @@ func calculate_force() -> Vector3:
 	var spring_force = compression * spring_stiffness
 	var damping_force = compression_velocity * damping_coefficient
 	
-	var force_magnitude = spring_force - damping_force
+	var compression_force := Vector3.ZERO
 
-	force_magnitude = clamp(force_magnitude, 0.0, (car_body.get_gravity()*car_body.mass).length_squared()) 
-	
-	var compression_force:Vector3 = normal * force_magnitude
+	if compression > 0.0:
+		var force_magnitude = spring_force - damping_force
+
+		force_magnitude = clamp(force_magnitude, 0.0, (car_body.get_gravity()*car_body.mass).length_squared()) 
+		
+		compression_force = normal * force_magnitude
 	
 	# horizontal friction
 	
@@ -73,6 +73,6 @@ func _process(delta: float) -> void:
 	
 	local_down.x = 0.0
 	if local_down.length_squared() > 0.001:
-		target_position = local_down.normalized() * radius
+		target_position = local_down.normalized() * radius*1.1
 	else:
-		target_position = Vector3(0, -radius, 0)
+		target_position = Vector3(0, -radius*1.1, 0)
