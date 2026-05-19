@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://c4lrqpf05kju5"]
+
+[ext_resource type="Script" uid="uid://d4lxkj6ucquqk" path="res://wheel.gd" id="1_8m8ww"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_e0ure"]
+height = 0.1
+
+[node name="wheel" type="RayCast3D"]
+target_position = Vector3(0, -0.6, 0)
+script = ExtResource("1_8m8ww")
+cur_speed = null
+
+[node name="mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_e0ure")
