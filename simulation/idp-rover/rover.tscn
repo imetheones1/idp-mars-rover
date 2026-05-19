@@ -2,29 +2,24 @@
 
 [ext_resource type="PackedScene" uid="uid://c4lrqpf05kju5" path="res://wheel.tscn" id="1_8cnl3"]
 [ext_resource type="Script" uid="uid://y4uyar50yfl4" path="res://rover.gd" id="1_d4gi6"]
-[ext_resource type="Texture2D" uid="uid://b21feo0fia3hl" path="res://textures/face.png" id="2_d4gi6"]
+[ext_resource type="Texture2D" uid="uid://u2r68jj3q4ae" path="res://textures/prototype/PNG/Green/texture_10.png" id="3_d4gi6"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_jfj6g"]
 size = Vector3(1, 0.5, 2)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7ff10"]
-shading_mode = 0
-albedo_texture = ExtResource("2_d4gi6")
+albedo_texture = ExtResource("3_d4gi6")
+uv1_triplanar = true
 
-[sub_resource type="QuadMesh" id="QuadMesh_44p52"]
-material = SubResource("StandardMaterial3D_7ff10")
-flip_faces = true
-size = Vector2(0.4, 0.4)
+[sub_resource type="BoxMesh" id="BoxMesh_44p52"]
+size = Vector3(1, 0.5, 2)
 
 [node name="rover" type="RigidBody3D"]
+collision_layer = 2
 script = ExtResource("1_d4gi6")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_jfj6g")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.0253817)
-mesh = SubResource("QuadMesh_44p52")
 
 [node name="wheels" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36697334, 0)
@@ -52,3 +47,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 1)
 target_position = Vector3(0, -0.5, 0)
 car_body = NodePath("../..")
 cur_speed = 0.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_7ff10")
+mesh = SubResource("BoxMesh_44p52")

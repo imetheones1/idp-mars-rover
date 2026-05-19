@@ -5,7 +5,9 @@ extends Node3D
 func _ready() -> void:
 	pass # Replace with function body.
 
+@onready var pivot: Node3D = $rover/pivot
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	var rot := Input.get_axis("camera_left","camera_right") * delta
+	pivot.rotate_y(rot)
