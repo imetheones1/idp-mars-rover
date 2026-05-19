@@ -33,3 +33,38 @@ func _process(delta: float) -> void:
 	cur_dir = move_toward(cur_dir,in_dir,delta*250)
 	$wheels/fl.rotation_degrees.y = cur_dir
 	$wheels/fr.rotation_degrees.y = cur_dir
+	
+	if Input.is_action_just_pressed("update_terrain"):
+		# todo move this to input function
+		write_terrain_to_file()
+
+@onready var distance_timer: Timer = $distanceTimer
+@onready var distance_sensors: Node3D = $distanceSensors
+
+var terrain_points: Array[Vector3] = []
+
+func _on_timer_timeout() -> void:
+	var new_point_count := 0
+	for distance_sensor: RayCast3D in distance_sensors.get_children():
+		if not distance_sensor.is_colliding():
+			continue
+		var collision_point := distance_sensor.get_collision_point()
+		var valid := true
+		for point: Vector3 in terrain_points:
+			if (point-collision_point).length_squared() < (0.5*0.5):
+				valid = false
+				break
+		if valid:
+			terrain_points.append(collision_point)
+			new_point_count+=1
+	print_debug("new points: ",new_point_count)
+	distance_timer.start()
+
+func write_terrain_to_file():
+	var app_dir = "user://vertices.txt"
+	var file := FileAccess.open(app_dir,FileAccess.WRITE)
+	var cur_string := ""
+	for vertex:Vector3 in terrain_points:
+		cur_string+="%f,%f,%f\n" % [vertex.x,vertex.y,vertex.z]
+	file.store_string(cur_string)
+	print("path: "+file.get_path_absolute())
