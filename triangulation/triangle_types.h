@@ -9,6 +9,11 @@ typedef struct vec3 {
     double z;
 } vec3;
 
+typedef struct vec3_list {
+    vec3 *vertices;
+    size_t count;
+} vec3_list;
+
 typedef struct triangle {
     size_t i0;
     size_t i1;
@@ -27,5 +32,7 @@ typedef struct edge {
 } edge;
 
 triangle_list_node* triangulate_vertices(vec3 *vertices, size_t vertex_count);
+
+vec3_list load_vertices(char *path);
 
 #endif

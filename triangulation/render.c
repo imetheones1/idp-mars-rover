@@ -51,25 +51,25 @@ mat4 calculate_view_matrix(double yaw, double pitch, double zoom) {
     return view;
 }
 
-static vec3 *vertices = NULL;
-static size_t vertex_count = 0;
-static size_t vertex_capacity = 0;
+// static vec3 *vertices = NULL;
+// static size_t vertex_count = 0;
+// static size_t vertex_capacity = 0;
 
-void init_vertices(size_t initial_capacity){
-    vertex_capacity = initial_capacity;
-    vertices = SDL_malloc(initial_capacity * sizeof(vec3));
-}
+// void init_vertices(size_t initial_capacity){
+//     vertex_capacity = initial_capacity;
+//     vertices = SDL_malloc(initial_capacity * sizeof(vec3));
+// }
 
-void push_vertex(vec3 vertex) {
-    if (vertex_count>=vertex_capacity){
-        if (vertex_capacity <= 0) {
-            vertex_capacity = 2;
-        }
-        vertex_capacity*=2;
-        vertices = SDL_realloc(vertices,vertex_capacity * sizeof(vec3));
-    }
-    vertices[vertex_count++] = vertex;
-}
+// void push_vertex(vec3 vertex) {
+//     if (vertex_count>=vertex_capacity){
+//         if (vertex_capacity <= 0) {
+//             vertex_capacity = 2;
+//         }
+//         vertex_capacity*=2;
+//         vertices = SDL_realloc(vertices,vertex_capacity * sizeof(vec3));
+//     }
+//     vertices[vertex_count++] = vertex;
+// }
 
 vec3 transform_point(vec3 p, mat4 m) {
     return (vec3) {
@@ -94,18 +94,20 @@ static double calculate_test_terrain_height(double x, double z) {
 int main() {
     bool result;
 
-    init_vertices(test_vertex_count);
-    SDL_srand(255255255255);
-    for (size_t i = 0; i < test_vertex_count; i++){
-        vec3 cur = {
-            .x = SDL_randf()*2 - 1,
-            .z = SDL_randf()*2 - 1
-        };
-        cur.y = calculate_test_terrain_height(cur.x,cur.z);
-        push_vertex(cur);
-    }
+    // init_vertices(test_vertex_count);
+    // SDL_srand(255255255255);
+    // for (size_t i = 0; i < test_vertex_count; i++){
+    //     vec3 cur = {
+    //         .x = SDL_randf()*2 - 1,
+    //         .z = SDL_randf()*2 - 1
+    //     };
+    //     cur.y = calculate_test_terrain_height(cur.x,cur.z);
+    //     push_vertex(cur);
+    // }
 
-    triangle_list_node *triangles = triangulate_vertices(vertices,test_vertex_count);
+    vec3_list real_vertices = load_vertices("C:/Users/zacha/AppData/Roaming/Godot/app_userdata/idp rover/vertices.txt");
+
+    triangle_list_node *triangles = triangulate_vertices(real_vertices.vertices,real_vertices.count);
 
     result = SDL_Init(SDL_INIT_VIDEO);
     if (!result) {
@@ -131,7 +133,7 @@ int main() {
 
     double pitch = 0;
     double yaw = 0;
-    double zoom = 2;
+    double zoom = 50;
 
     do {
         now = SDL_GetTicksNS();
@@ -177,18 +179,18 @@ int main() {
 
         mat4 m = calculate_view_matrix(yaw,pitch,zoom);
 
-        vec3 *transformed = SDL_malloc(vertex_count * sizeof(vec3));
-        for (size_t i = 0; i < vertex_count; i++) {
-            transformed[i] = transform_point(vertices[i],m);
+        vec3 *transformed = SDL_malloc(real_vertices.count * sizeof(vec3));
+        for (size_t i = 0; i < real_vertices.count; i++) {
+            transformed[i] = transform_point(real_vertices.vertices[i],m);
         }
 
         SDL_SetRenderDrawColor(renderer,255,255,255,255);
 
-        double *projected_x = SDL_malloc(vertex_count * sizeof(double));
-        double *projected_y = SDL_malloc(vertex_count * sizeof(double));
-        bool *valid = SDL_calloc(vertex_count * sizeof(bool), sizeof(bool));
+        double *projected_x = SDL_malloc(real_vertices.count * sizeof(double));
+        double *projected_y = SDL_malloc(real_vertices.count * sizeof(double));
+        bool *valid = SDL_calloc(real_vertices.count * sizeof(bool), sizeof(bool));
 
-        for (size_t i = 0; i < vertex_count; i++) {
+        for (size_t i = 0; i < real_vertices.count; i++) {
             vec3 cur = transformed[i];
             if (cur.z > -0.01) continue;
             double inv_z = 1/cur.z;

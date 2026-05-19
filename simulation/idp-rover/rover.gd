@@ -64,7 +64,17 @@ func write_terrain_to_file():
 	var app_dir = "user://vertices.txt"
 	var file := FileAccess.open(app_dir,FileAccess.WRITE)
 	var cur_string := ""
-	for vertex:Vector3 in terrain_points:
-		cur_string+="%f,%f,%f\n" % [vertex.x,vertex.y,vertex.z]
+	var line_length = 0
+	for vertex: Vector3 in terrain_points:
+		var x_str = ("-%015.10f" % abs(vertex.x)) if vertex.x < 0 else ("0%015.10f" % vertex.x)
+		var y_str = ("-%015.10f" % abs(vertex.y)) if vertex.y < 0 else ("0%015.10f" % vertex.y)
+		var z_str = ("-%015.10f" % abs(vertex.z)) if vertex.z < 0 else ("0%015.10f" % vertex.z)
+		var line = "%s,%s,%s\n" % [x_str, y_str, z_str]
+		cur_string += line
+		if line_length == 0:
+			line_length = line.length()
+		elif line.length() != line_length:
+			print_debug("lines are different sizes!")
 	file.store_string(cur_string)
 	print("path: "+file.get_path_absolute())
+	print("line length: "+str(line_length))

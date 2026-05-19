@@ -1,1 +1,3 @@
-gcc triangulation/render.c triangulation/triangulation.c -o triangulation/render.exe -lSDL3
+gcc triangulation/render.c triangulation/triangulation.c triangulation/heightmap.c -o triangulation/render.exe -lSDL3
+
+gcc triangulation/heightmap.c triangulation/triangulation.c -o triangulation/heightmap.exe -lSDL3
