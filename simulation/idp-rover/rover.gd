@@ -23,7 +23,11 @@ func _ready() -> void:
 var cur_speed := 0.0
 var cur_dir := 0.0
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.is_action_pressed("update_terrain"):
+			write_terrain_to_file()
+
 func _process(delta: float) -> void:
 	var in_speed = Input.get_axis("backward","forward") * 5
 	cur_speed = damp(cur_speed,in_speed,0.99,delta)
@@ -33,15 +37,10 @@ func _process(delta: float) -> void:
 	cur_dir = move_toward(cur_dir,in_dir,delta*250)
 	$wheels/fl.rotation_degrees.y = cur_dir
 	$wheels/fr.rotation_degrees.y = cur_dir
-	
-	if Input.is_action_just_pressed("update_terrain"):
-		# todo move this to input function
-		write_terrain_to_file()
 
 @onready var distance_timer: Timer = $distanceTimer
 @onready var distance_sensors: Node3D = $distanceSensors
 
-const max_terrain_points := 3000
 var terrain_points: Array[Vector3] = []
 var new_point_count := 0
 var invalid_point_count := 0
@@ -71,11 +70,8 @@ func _on_timer_timeout() -> void:
 				if absf(generated_height-collision_point.y) > 0.5:
 					invalid_point_count+=1
 	#print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
-	while len(terrain_points) > max_terrain_points:
-		terrain_points.pop_front()
 	if invalid_point_count > 100:
 		write_terrain_to_file()
-		invalid_point_count = 0
 
 @export var debug_marker:PackedScene
 
@@ -122,6 +118,8 @@ func write_terrain_to_file():
 	if exit_code != 0:
 		push_error("heightmap generation failed")
 		return
+		
+	invalid_point_count = 0
 	
 	generated_heightmap = HeightmapHolder.new()
 	if not generated_heightmap.load_from_file("user://heightmap.roverheightmap"):

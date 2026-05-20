@@ -9,11 +9,10 @@
 
 #define SQRT_2 1.41421356237f
 #define flatness_weight 5.0f
+#define lateral_weight 10.0f
 
-// maximum allowed step height between neighbors
 #define MAX_SLOPE 2.0f
 
-// sentinel invalid terrain value
 #define INVALID_HEIGHT -99999.0f
 
 #define IS_INVALID(val) ((val) <= INVALID_HEIGHT)
@@ -312,7 +311,38 @@ int main(int argc, char *argv[]) {
                 continue;
             }
 
-            float step_cost = (move_cost[i] * real_pixel_size) + (height_diff * flatness_weight);
+            int perp_x = -move_y[i];
+            int perp_y = move_x[i];
+
+            int left_x = neighbor_x + perp_x;
+            int left_y = neighbor_y + perp_y;
+            int right_x = neighbor_x - perp_x;
+            int right_y = neighbor_y - perp_y;
+
+            float lateral_diff = 0.0f;
+            int valid_sides = 0;
+
+            if (left_x >= 0 && left_x < width && left_y >= 0 && left_y < height) {
+                float left_height = heightmap[left_y * width + left_x];
+                if (!IS_INVALID(left_height)) {
+                    lateral_diff += fabsf(left_height - neighbor_height);
+                    valid_sides++;
+                }
+            }
+
+            if (right_x >= 0 && right_x < width && right_y >= 0 && right_y < height) {
+                float right_height = heightmap[right_y * width + right_x];
+                if (!IS_INVALID(right_height)) {
+                    lateral_diff += fabsf(right_height - neighbor_height);
+                    valid_sides++;
+                }
+            }
+
+            float lateral_slope = (valid_sides > 0) ? (lateral_diff / valid_sides) : 0.0f;
+
+            float step_cost = (move_cost[i] * real_pixel_size) 
+                            + (height_diff * flatness_weight)
+                            + (lateral_slope * lateral_weight);
 
             float tentative_g = g_score[current_idx] + step_cost;
 
