@@ -17,7 +17,7 @@ mesh = SubResource("QuadMesh_vkrsl")
 script = ExtResource("2_ms81d")
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 60.0
+wait_time = 120.0
 one_shot = true
 autostart = true
 

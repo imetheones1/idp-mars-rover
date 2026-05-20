@@ -1,5 +1,27 @@
 extends RigidBody3D
 
+@export var target_one:Vector2 : 
+	set(val):
+		target_one = val
+		target_one_change.emit(val)
+@export var target_two:Vector2 :
+	set(val):
+		target_two = val
+		target_two_change.emit(val)
+		
+var cur_target:Vector2
+
+func update_target():
+	var cur_xz := Vector2(global_position.x,global_position.z)
+	
+	if (cur_xz-target_one).length_squared() > (cur_xz-target_two).length_squared():
+		cur_target = target_one
+	else:
+		cur_target = target_two
+
+signal target_one_change(newval:Vector2)
+signal target_two_change(newval:Vector2)
+
 enum STATE {
 	DRIVING,
 	FOLLOWING
@@ -35,15 +57,21 @@ func _input(event: InputEvent) -> void:
 			if cur_state == STATE.DRIVING:
 				cur_state = STATE.FOLLOWING
 				cur_point = 0
+				update_target()
 			elif cur_state == STATE.FOLLOWING:
 				cur_state = STATE.DRIVING
-			
+		elif event.is_action_pressed("set_target_1"):
+			target_one = Vector2(global_position.x,global_position.z)
+		elif event.is_action_pressed("set_target_2"):
+			target_two = Vector2(global_position.x,global_position.z)
+
 @onready var fl: Wheel = $wheels/fl
 @onready var fr: Wheel = $wheels/fr
 @onready var bl: Wheel = $wheels/bl
 @onready var br: Wheel = $wheels/br
 
 const max_wheel_speed := 5
+const max_wheel_speed_following := 4
 var points: Array[Vector3] = []
 var cur_point := 0
 
@@ -61,7 +89,9 @@ func _process(delta: float) -> void:
 	elif cur_state == STATE.FOLLOWING:
 		if cur_point >= points.size():
 			print("reached end of path")
-			cur_state = STATE.DRIVING
+			update_target()
+			write_terrain_to_file()
+			#cur_state = STATE.DRIVING
 			return
 
 		var target_pos = points[cur_point]
@@ -91,8 +121,8 @@ func _process(delta: float) -> void:
 		var left_power  = forward_power + steer_power
 		var right_power = forward_power - steer_power
 
-		left_power  = clamp(left_power * max_wheel_speed, -max_wheel_speed, max_wheel_speed)
-		right_power = clamp(right_power * max_wheel_speed, -max_wheel_speed, max_wheel_speed)
+		left_power  = clamp(left_power  * max_wheel_speed_following, -max_wheel_speed_following, max_wheel_speed_following)
+		right_power = clamp(right_power * max_wheel_speed_following, -max_wheel_speed_following, max_wheel_speed_following)
 
 		fl.cur_speed = left_power
 		bl.cur_speed = left_power
@@ -137,7 +167,7 @@ func _on_timer_timeout() -> void:
 				if absf(generated_height-collision_point.y) > 0.5:
 					invalid_point_count+=1
 	#print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
-	if invalid_point_count > 100:
+	if invalid_point_count > 100 and cur_state == STATE.FOLLOWING or invalid_point_count > 500:
 		write_terrain_to_file()
 
 @export var debug_marker:PackedScene
@@ -205,8 +235,8 @@ func write_terrain_to_file():
 			"\"%s\"" % path_path,
 			global_position.x,
 			global_position.z,
-			0,
-			0
+			cur_target.x,
+			cur_target.y
 		],
 		output,
 		true

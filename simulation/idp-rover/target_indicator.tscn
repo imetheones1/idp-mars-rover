@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://vg3oscvvoq5e"]
+
+[ext_resource type="Texture2D" uid="uid://cijhdkcvfyaqv" path="res://textures/awesome arrow.png" id="1_hlwlb"]
+
+[node name="target_indicator" type="Node3D"]
+
+[node name="target_indicator" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.087461, 0)
+billboard = 2
+texture = ExtResource("1_hlwlb")
