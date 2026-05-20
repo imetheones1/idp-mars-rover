@@ -14,3 +14,4 @@ func _process(delta: float) -> void:
 	main_label.text+= "position: (%.2f, %.2f, %.2f)\n" % [rover.global_position.x,rover.global_position.y,rover.global_position.z]
 	main_label.text+= "vertex count: %d/%d\n" % [len(rover.terrain_points),rover.max_terrain_points]
 	main_label.text+= "new vertices: %d\n" % rover.new_point_count
+	main_label.text+= "invalid vertices: %d\n" % rover.invalid_point_count

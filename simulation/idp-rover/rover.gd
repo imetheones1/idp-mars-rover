@@ -41,9 +41,12 @@ func _process(delta: float) -> void:
 @onready var distance_timer: Timer = $distanceTimer
 @onready var distance_sensors: Node3D = $distanceSensors
 
-const max_terrain_points := 10000
+const max_terrain_points := 3000
 var terrain_points: Array[Vector3] = []
 var new_point_count := 0
+var invalid_point_count := 0
+
+var generated_heightmap:HeightmapHolder
 
 func _on_timer_timeout() -> void:
 	new_point_count = 0
@@ -63,9 +66,16 @@ func _on_timer_timeout() -> void:
 		if valid:
 			terrain_points.append(collision_point)
 			new_point_count+=1
+			if generated_heightmap != null and generated_heightmap.valid:
+				var generated_height = generated_heightmap.get_height_at_world(collision_point.x,collision_point.z)
+				if absf(generated_height-collision_point.y) > 0.5:
+					invalid_point_count+=1
 	#print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
 	while len(terrain_points) > max_terrain_points:
 		terrain_points.pop_front()
+	if invalid_point_count > 100:
+		write_terrain_to_file()
+		invalid_point_count = 0
 
 @export var debug_marker:PackedScene
 
@@ -110,8 +120,12 @@ func write_terrain_to_file():
 				continue
 			print(line)
 	if exit_code != 0:
-		print_debug("super fail!")
+		push_error("heightmap generation failed")
 		return
+	
+	generated_heightmap = HeightmapHolder.new()
+	if not generated_heightmap.load_from_file("user://heightmap.roverheightmap"):
+		push_error("failed to load heightmap")
 	
 	var temp_file_2 := FileAccess.open("user://path.roverpath",FileAccess.WRITE)
 	var path_path := temp_file_2.get_path_absolute()
@@ -136,7 +150,7 @@ func write_terrain_to_file():
 		for line in out.split("\n"):
 			print(line)
 	if exit_code != 0:
-		print_debug("super fail 2!")
+		push_error("path generation failed")
 		return
 	
 	var points: Array[Vector3] = []
