@@ -272,6 +272,9 @@ int main(int argc, char *argv[]) {
     fwrite(&min_x,sizeof(double),1,out_file);
     fwrite(&min_z,sizeof(double),1,out_file);
 
+    const double temp_pixel_size = pixel_size;
+    fwrite(&temp_pixel_size,sizeof(double),1,out_file);
+
     fwrite(&width, sizeof(int32_t), 1, out_file);
     fwrite(&height, sizeof(int32_t), 1, out_file);
 

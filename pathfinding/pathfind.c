@@ -133,6 +133,9 @@ int main(int argc, char *argv[]) {
     fread(&min_x, sizeof(double), 1, file);
     fread(&min_z, sizeof(double), 1, file);
 
+    double real_pixel_size = pixel_size;
+    fread(&real_pixel_size, sizeof(double), 1, file);
+
     int32_t width = 0;
     int32_t height = 0;
 
@@ -168,10 +171,10 @@ int main(int argc, char *argv[]) {
     float goal_world_x = (float)atof(argv[5]);
     float goal_world_z = (float)atof(argv[6]);
 
-    int start_x = (int)roundf((start_world_x - (float)min_x) / pixel_size);
-    int start_y = (int)roundf((start_world_z - (float)min_z) / pixel_size);
-    int goal_x  = (int)roundf((goal_world_x  - (float)min_x) / pixel_size);
-    int goal_y  = (int)roundf((goal_world_z  - (float)min_z) / pixel_size);
+    int start_x = (int)roundf((start_world_x - (float)min_x) / real_pixel_size);
+    int start_y = (int)roundf((start_world_z - (float)min_z) / real_pixel_size);
+    int goal_x  = (int)roundf((goal_world_x  - (float)min_x) / real_pixel_size);
+    int goal_y  = (int)roundf((goal_world_z  - (float)min_z) / real_pixel_size);
 
     if (
         start_x < 0 || start_x >= width ||
@@ -309,7 +312,7 @@ int main(int argc, char *argv[]) {
                 continue;
             }
 
-            float step_cost = (move_cost[i] * pixel_size) + (height_diff * flatness_weight);
+            float step_cost = (move_cost[i] * real_pixel_size) + (height_diff * flatness_weight);
 
             float tentative_g = g_score[current_idx] + step_cost;
 
@@ -382,9 +385,9 @@ int main(int argc, char *argv[]) {
                 int map_x = idx % width;
                 int map_y = idx / width;
 
-                float world_x = (float)min_x + ((float)map_x * pixel_size);
+                float world_x = (float)min_x + ((float)map_x * real_pixel_size);
 
-                float world_z = (float)min_z + ((float)map_y * pixel_size);
+                float world_z = (float)min_z + ((float)map_y * real_pixel_size);
 
                 float world_y = heightmap[idx];
 
