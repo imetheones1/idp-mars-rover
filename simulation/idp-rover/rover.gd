@@ -60,6 +60,8 @@ func _on_timer_timeout() -> void:
 	print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
 	distance_timer.start()
 
+@export var debug_marker:PackedScene
+
 func write_terrain_to_file():
 	print_debug("\nbeginning everything")
 	var app_dir = "user://vertices.txt"
@@ -115,7 +117,7 @@ func write_terrain_to_file():
 	temp_file_2.close()
 	print("path path: "+path_path)
 	
-	var command_2 = "\"C:/Users/zacha/Documents/programms/idp-mars-rover/pathfinding/pathfind.exe %s %s\"" % [heightmap_path,path_path]
+	var command_2 = "\"C:/Users/zacha/Documents/programms/idp-mars-rover/pathfinding/pathfind.exe %s %s %f %f %f %f\"" % [heightmap_path,path_path,global_position.x,global_position.z,0,0]
 	output = []
 	OS.execute("powershell.exe",["-Command",command_2],output,true)
 	real_output = ""
@@ -126,5 +128,34 @@ func write_terrain_to_file():
 	if not real_output.begins_with("success"):
 		print_debug("super fail 2!")
 		return
+	
+	var points: Array[Vector3] = []
+	var path_file := FileAccess.open("user://path.roverpath",FileAccess.READ)
+	
+	while path_file.get_position() < path_file.get_length():
+		var line := path_file.get_line().strip_edges()
+		
+		if line.is_empty():
+			continue
+			
+		var parts := line.split(",")
+		
+		if parts.size() == 3:
+			var x := parts[0].to_float()
+			var y := parts[1].to_float()
+			var z := parts[2].to_float()
+			
+			points.append(Vector3(x, y, z))
+		else:
+			push_warning("Skipping malformed line: " + line)
+			
+	path_file.close()
+	
+	for point:Vector3 in points:
+		var new_thing:MeshInstance3D = debug_marker.instantiate()
+		$temp_Debug.add_child(new_thing)
+		new_thing.global_position = point
+		new_thing.global_position.y += 1
+		new_thing.top_level = true
 	
 	print()

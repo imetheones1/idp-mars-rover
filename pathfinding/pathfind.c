@@ -10,8 +10,8 @@
 #define IS_INVALID(val) (fabsf(val) < 0.01)
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        printf("usage: %s input_file output_file",argv[0]);
+    if (argc != 7) {
+        printf("usage: %s input_file output_file start_x start_z goal_x goal_z\n", argv[0]);
         return 1;
     }
 
@@ -53,8 +53,22 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    int start_x = 140, start_y = 140; 
-    int goal_x = 160, goal_y = 160;
+    double start_world_x = atof(argv[3]);
+    double start_world_z = atof(argv[4]);
+    double goal_world_x = atof(argv[5]);
+    double goal_world_z = atof(argv[6]);
+
+    int start_x = (int)round((start_world_x - min_x) / pixel_size);
+    int start_y = (int)round((start_world_z - min_z) / pixel_size);
+    int goal_x = (int)round((goal_world_x - min_x) / pixel_size);
+    int goal_y = (int)round((goal_world_z - min_z) / pixel_size);
+
+    if (start_x < 0 || start_x >= width || start_y < 0 || start_y >= height ||
+        goal_x < 0 || goal_x >= width || goal_y < 0 || goal_y >= height) {
+        printf("start or goal positions are outside the heightmap boundaries\n");
+        free(heightmap);
+        return 1;
+    }
 
     int grid_size = width * height;
     double* g_score = (double*)malloc(grid_size * sizeof(double));
@@ -192,6 +206,7 @@ int main(int argc, char *argv[]) {
     free(f_score);
     free(came_from);
     free(open_set);
+    free(heightmap);
 
     printf("success");
 }
