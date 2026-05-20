@@ -142,9 +142,11 @@ var invalid_point_count := 0
 
 var generated_heightmap:HeightmapHolder
 
+var first := true
 func _on_timer_timeout() -> void:
 	new_point_count = 0
 	for distance_sensor: RayCast3D in distance_sensors.get_children() + front_sensors.get_children():
+		sensor_count +=1 
 		distance_sensor.enabled = true
 		distance_sensor.force_update_transform()
 		distance_sensor.force_raycast_update()
@@ -156,7 +158,7 @@ func _on_timer_timeout() -> void:
 		var point: Vector3
 		for point_i:int in terrain_points.size():
 			point = terrain_points[-point_i -1]
-			if (point-collision_point).length_squared() < (0.5*0.5):
+			if (point-collision_point).length_squared() < (0.75*0.75):
 				valid = false
 				break
 		if valid:
@@ -167,8 +169,9 @@ func _on_timer_timeout() -> void:
 				if absf(generated_height-collision_point.y) > 0.5:
 					invalid_point_count+=1
 	#print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
-	if invalid_point_count > 100 and cur_state == STATE.FOLLOWING or invalid_point_count > 500:
+	if first or invalid_point_count > 100 and cur_state == STATE.FOLLOWING or invalid_point_count > 500:
 		write_terrain_to_file()
+	first = false
 
 @export var debug_marker:PackedScene
 
