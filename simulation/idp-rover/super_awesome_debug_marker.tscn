@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cwrf5oxckf4o8"]
+[gd_scene load_steps=5 format=3 uid="uid://cwrf5oxckf4o8"]
 
 [ext_resource type="Texture2D" uid="uid://ceaevirkcervp" path="res://icon.svg" id="1_otwne"]
+[ext_resource type="Script" uid="uid://cj8oh1rgvw3ba" path="res://super_awesome_debug_marker.gd" id="2_ms81d"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ms81d"]
 shading_mode = 0
@@ -13,3 +14,11 @@ size = Vector2(0.5, 0.5)
 
 [node name="super_awesome_debug_marker" type="MeshInstance3D"]
 mesh = SubResource("QuadMesh_vkrsl")
+script = ExtResource("2_ms81d")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 60.0
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

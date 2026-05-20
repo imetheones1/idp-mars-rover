@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="idp_rover"
-run/main_scene="uid://bjvndbyb8tpv3"
+run/main_scene="uid://csqvdxa0lf308"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -75,6 +75,7 @@ update_terrain={
 [physics]
 
 3d/physics_engine="Jolt Physics"
+jolt_physics_3d/simulation/velocity_steps=5
 3d/default_gravity=3.7109999999999985
 
 [rendering]

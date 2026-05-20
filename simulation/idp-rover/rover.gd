@@ -48,9 +48,13 @@ var new_point_count := 0
 func _on_timer_timeout() -> void:
 	new_point_count = 0
 	for distance_sensor: RayCast3D in distance_sensors.get_children():
+		distance_sensor.enabled = true
+		distance_sensor.force_update_transform()
+		distance_sensor.force_raycast_update()
 		if not distance_sensor.is_colliding():
 			continue
 		var collision_point := distance_sensor.get_collision_point()
+		distance_sensor.enabled = false
 		var valid := true
 		for point: Vector3 in terrain_points:
 			if (point-collision_point).length_squared() < (0.5*0.5):
@@ -62,7 +66,6 @@ func _on_timer_timeout() -> void:
 	#print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
 	while len(terrain_points) > max_terrain_points:
 		terrain_points.pop_front()
-	distance_timer.start()
 
 @export var debug_marker:PackedScene
 
@@ -122,6 +125,7 @@ func write_terrain_to_file():
 	print("path path: "+path_path)
 	
 	var command_2 = "\"C:/Users/zacha/Documents/programms/idp-mars-rover/pathfinding/pathfind.exe %s %s %f %f %f %f\"" % [heightmap_path,path_path,global_position.x,global_position.z,0,0]
+	print("second command: "+command_2)
 	output = []
 	OS.execute("powershell.exe",["-Command",command_2],output,true)
 	real_output = ""
