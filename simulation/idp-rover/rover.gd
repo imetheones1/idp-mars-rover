@@ -157,7 +157,7 @@ func _on_timer_timeout() -> void:
 		var point: Vector3
 		for point_i:int in terrain_points.size():
 			point = terrain_points[-point_i -1]
-			if (point-collision_point).length_squared() < (0.75*0.75):
+			if (point-collision_point).length_squared() < 1:
 				valid = false
 				break
 		if valid:
