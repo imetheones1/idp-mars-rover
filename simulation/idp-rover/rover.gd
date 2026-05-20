@@ -104,7 +104,7 @@ func write_terrain_to_file():
 		#true
 	#)
 	# todo find out why powershell is needed
-	var command = "\"C:/Users/zacha/Documents/programms/idp-mars-rover/triangulation/heightmap.exe %s %s\"" % [vertex_file_path,heightmap_path]
+	var command = "\"%s %s %s\"" % [Paths.heightmap_exe_path,vertex_file_path,heightmap_path]
 	print("command: ",command)
 	OS.execute("powershell.exe",["-Command",command],output,true)
 	#print("exit code: ",exit_code)
@@ -124,7 +124,7 @@ func write_terrain_to_file():
 	temp_file_2.close()
 	print("path path: "+path_path)
 	
-	var command_2 = "\"C:/Users/zacha/Documents/programms/idp-mars-rover/pathfinding/pathfind.exe %s %s %f %f %f %f\"" % [heightmap_path,path_path,global_position.x,global_position.z,0,0]
+	var command_2 = "\"%s %s %s %f %f %f %f\"" % [Paths.pathfind_exe_path,heightmap_path,path_path,global_position.x,global_position.z,0,0]
 	print("second command: "+command_2)
 	output = []
 	OS.execute("powershell.exe",["-Command",command_2],output,true)
