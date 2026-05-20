@@ -1,5 +1,12 @@
 extends RigidBody3D
 
+enum STATE {
+	DRIVING,
+	FOLLOWING
+}
+
+var cur_state:STATE = STATE.DRIVING
+
 @onready var wheels: Node3D = $wheels
 
 func damp(a,b,lambda:float,dt:float):
@@ -20,26 +27,84 @@ func _physics_process(delta: float) -> void:
 func _ready() -> void:
 	pass # Replace with function body.
 
-var cur_speed := 0.0
-var cur_dir := 0.0
-
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		if event.is_action_pressed("update_terrain"):
 			write_terrain_to_file()
+		elif event.is_action_pressed("follow_path"):
+			if cur_state == STATE.DRIVING:
+				cur_state = STATE.FOLLOWING
+				cur_point = 0
+			elif cur_state == STATE.FOLLOWING:
+				cur_state = STATE.DRIVING
+			
+@onready var fl: Wheel = $wheels/fl
+@onready var fr: Wheel = $wheels/fr
+@onready var bl: Wheel = $wheels/bl
+@onready var br: Wheel = $wheels/br
+
+const max_wheel_speed := 5
+var points: Array[Vector3] = []
+var cur_point := 0
 
 func _process(delta: float) -> void:
-	var in_speed = Input.get_axis("backward","forward") * 5
-	cur_speed = damp(cur_speed,in_speed,0.99,delta)
-	for wheel: Wheel in wheels.get_children():
-		wheel.cur_speed = cur_speed
-	var in_dir = Input.get_axis("right","left") * 60
-	cur_dir = move_toward(cur_dir,in_dir,delta*250)
-	$wheels/fl.rotation_degrees.y = cur_dir
-	$wheels/fr.rotation_degrees.y = cur_dir
+	if cur_state == STATE.DRIVING:
+		var in_dir = Input.get_vector("left","right","backward","forward")
+		var left_power  = in_dir.y + in_dir.x
+		var right_power = in_dir.y - in_dir.x
+		left_power  = clamp(left_power *max_wheel_speed,-max_wheel_speed,max_wheel_speed)
+		right_power = clamp(right_power*max_wheel_speed,-max_wheel_speed,max_wheel_speed)
+		fl.cur_speed = left_power
+		bl.cur_speed = left_power
+		fr.cur_speed = right_power
+		br.cur_speed = right_power
+	elif cur_state == STATE.FOLLOWING:
+		if cur_point >= points.size():
+			print("reached end of path")
+			cur_state = STATE.DRIVING
+			return
+
+		var target_pos = points[cur_point]
+		var current_pos = global_position 
+		
+		var distance_to_target = current_pos.distance_to(target_pos)
+		if distance_to_target <= 3:
+			cur_point += 1
+			return
+
+		var dir_to_target = (target_pos - current_pos).normalized()
+
+		var forward_dir = -global_transform.basis.z 
+		var right_dir = global_transform.basis.x
+
+		var forward_dot = forward_dir.dot(dir_to_target)
+		var right_dot = right_dir.dot(dir_to_target)
+
+		var forward_power = clamp(forward_dot, 0.0, 1.0) 
+		
+		var steer_power = right_dot
+
+		if forward_dot < 0:
+			forward_power = 0.0
+			steer_power = sign(right_dot)
+
+		var left_power  = forward_power + steer_power
+		var right_power = forward_power - steer_power
+
+		left_power  = clamp(left_power * max_wheel_speed, -max_wheel_speed, max_wheel_speed)
+		right_power = clamp(right_power * max_wheel_speed, -max_wheel_speed, max_wheel_speed)
+
+		fl.cur_speed = left_power
+		bl.cur_speed = left_power
+		fr.cur_speed = right_power
+		br.cur_speed = right_power
+	else:
+		print("state was set to an invalid value")
+		cur_state = STATE.DRIVING
 
 @onready var distance_timer: Timer = $distanceTimer
 @onready var distance_sensors: Node3D = $distanceSensors
+@onready var front_sensors: Node3D = $frontSensors
 
 var terrain_points: Array[Vector3] = []
 var new_point_count := 0
@@ -49,7 +114,7 @@ var generated_heightmap:HeightmapHolder
 
 func _on_timer_timeout() -> void:
 	new_point_count = 0
-	for distance_sensor: RayCast3D in distance_sensors.get_children():
+	for distance_sensor: RayCast3D in distance_sensors.get_children() + front_sensors.get_children():
 		distance_sensor.enabled = true
 		distance_sensor.force_update_transform()
 		distance_sensor.force_raycast_update()
@@ -58,7 +123,9 @@ func _on_timer_timeout() -> void:
 		var collision_point := distance_sensor.get_collision_point()
 		distance_sensor.enabled = false
 		var valid := true
-		for point: Vector3 in terrain_points:
+		var point: Vector3
+		for point_i:int in terrain_points.size():
+			point = terrain_points[-point_i -1]
 			if (point-collision_point).length_squared() < (0.5*0.5):
 				valid = false
 				break
@@ -151,7 +218,7 @@ func write_terrain_to_file():
 		push_error("path generation failed")
 		return
 	
-	var points: Array[Vector3] = []
+	points = []
 	var path_file := FileAccess.open("user://path.roverpath",FileAccess.READ)
 	
 	while path_file.get_position() < path_file.get_length():
@@ -182,5 +249,7 @@ func write_terrain_to_file():
 		new_thing.global_position = point
 		new_thing.global_position.y += 1
 		new_thing.top_level = true
+	
+	cur_point = 0
 	
 	print()

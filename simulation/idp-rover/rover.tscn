@@ -311,4 +311,231 @@ autostart = true
 
 [node name="temp_Debug" type="Node3D" parent="."]
 
+[node name="frontSensors" type="Node3D" parent="."]
+
+[node name="RayCast3D" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.34948516, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D2" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1694808, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D3" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.015403703, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D4" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.23953, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D5" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4166923, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D6" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, 0.34948516, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D7" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, 0.1694808, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D8" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, -0.015403703, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D9" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, -0.23953, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D10" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, -0.4166923, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D11" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, 0.34948516, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D12" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, 0.1694808, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D13" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, -0.015403703, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D14" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, -0.23953, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D15" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(1, 0, 0, 0, 0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, -0.4166923, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D16" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0, -0.08715574, 0, 1, 0, 0.08715574, 0, 0.9961947, 0.34948516, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D17" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0, -0.08715574, 0, 1, 0, 0.08715574, 0, 0.9961947, 0.1694808, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D18" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0, -0.08715574, 0, 1, 0, 0.08715574, 0, 0.9961947, -0.015403703, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D19" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0, -0.08715574, 0, 1, 0, 0.08715574, 0, 0.9961947, -0.23953, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D20" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0, -0.08715574, 0, 1, 0, 0.08715574, 0, 0.9961947, -0.4166923, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D21" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, -0.0075961216, -0.08682408, 0, 0.9961947, -0.08715573, 0.08715574, 0.086824074, 0.9924039, 0.34948516, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D22" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, -0.0075961216, -0.08682408, 0, 0.9961947, -0.08715573, 0.08715574, 0.086824074, 0.9924039, 0.1694808, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D23" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, -0.0075961216, -0.08682408, 0, 0.9961947, -0.08715573, 0.08715574, 0.086824074, 0.9924039, -0.015403703, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D24" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, -0.0075961216, -0.08682408, 0, 0.9961947, -0.08715573, 0.08715574, 0.086824074, 0.9924039, -0.23953, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D25" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, -0.0075961216, -0.08682408, 0, 0.9961947, -0.08715573, 0.08715574, 0.086824074, 0.9924039, -0.4166923, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D26" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0.0075961216, -0.08682408, 0, 0.9961947, 0.08715573, 0.08715574, -0.086824074, 0.9924039, 0.34948516, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D27" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0.0075961216, -0.08682408, 0, 0.9961947, 0.08715573, 0.08715574, -0.086824074, 0.9924039, 0.1694808, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D28" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0.0075961216, -0.08682408, 0, 0.9961947, 0.08715573, 0.08715574, -0.086824074, 0.9924039, -0.015403703, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D29" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0.0075961216, -0.08682408, 0, 0.9961947, 0.08715573, 0.08715574, -0.086824074, 0.9924039, -0.23953, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D30" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0.0075961216, -0.08682408, 0, 0.9961947, 0.08715573, 0.08715574, -0.086824074, 0.9924039, -0.4166923, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D31" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0, 0.08715574, 0, 1, 0, -0.08715574, 0, 0.9961947, 0.34948516, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D32" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0, 0.08715574, 0, 1, 0, -0.08715574, 0, 0.9961947, 0.1694808, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D33" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0, 0.08715574, 0, 1, 0, -0.08715574, 0, 0.9961947, -0.015403703, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D34" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0, 0.08715574, 0, 1, 0, -0.08715574, 0, 0.9961947, -0.23953, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D35" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0, 0.08715574, 0, 1, 0, -0.08715574, 0, 0.9961947, -0.4166923, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D36" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0.0075961216, 0.08682408, 0, 0.9961947, -0.08715573, -0.08715574, 0.086824074, 0.9924039, 0.34948516, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D37" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0.0075961216, 0.08682408, 0, 0.9961947, -0.08715573, -0.08715574, 0.086824074, 0.9924039, 0.1694808, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D38" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0.0075961216, 0.08682408, 0, 0.9961947, -0.08715573, -0.08715574, 0.086824074, 0.9924039, -0.015403703, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D39" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0.0075961216, 0.08682408, 0, 0.9961947, -0.08715573, -0.08715574, 0.086824074, 0.9924039, -0.23953, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D40" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, 0.0075961216, 0.08682408, 0, 0.9961947, -0.08715573, -0.08715574, 0.086824074, 0.9924039, -0.4166923, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D41" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, -0.0075961216, 0.08682408, 0, 0.9961947, 0.08715573, -0.08715574, -0.086824074, 0.9924039, 0.34948516, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D42" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, -0.0075961216, 0.08682408, 0, 0.9961947, 0.08715573, -0.08715574, -0.086824074, 0.9924039, 0.1694808, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D43" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, -0.0075961216, 0.08682408, 0, 0.9961947, 0.08715573, -0.08715574, -0.086824074, 0.9924039, -0.015403703, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D44" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, -0.0075961216, 0.08682408, 0, 0.9961947, 0.08715573, -0.08715574, -0.086824074, 0.9924039, -0.23953, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
+[node name="RayCast3D45" type="RayCast3D" parent="frontSensors"]
+transform = Transform3D(0.9961947, -0.0075961216, 0.08682408, 0, 0.9961947, 0.08715573, -0.08715574, -0.086824074, 0.9924039, -0.4166923, 0, -1.0612042)
+enabled = false
+target_position = Vector3(0, 0, -10)
+
 [connection signal="timeout" from="distanceTimer" to="." method="_on_timer_timeout"]
