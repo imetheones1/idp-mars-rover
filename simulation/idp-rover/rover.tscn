@@ -18,8 +18,6 @@ size = Vector3(1, 0.5, 2)
 [node name="rover" type="RigidBody3D"]
 collision_layer = 2
 script = ExtResource("1_d4gi6")
-target_one = null
-target_two = null
 debug_marker = ExtResource("2_7ff10")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

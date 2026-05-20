@@ -146,7 +146,6 @@ var first := true
 func _on_timer_timeout() -> void:
 	new_point_count = 0
 	for distance_sensor: RayCast3D in distance_sensors.get_children() + front_sensors.get_children():
-		sensor_count +=1 
 		distance_sensor.enabled = true
 		distance_sensor.force_update_transform()
 		distance_sensor.force_raycast_update()
