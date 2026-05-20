@@ -1,5 +1,5 @@
 gcc triangulation/render.c triangulation/triangulation.c triangulation/heightmap.c -o triangulation/render.exe -lSDL3
 
-gcc triangulation/heightmap.c triangulation/triangulation.c -o triangulation/heightmap.exe -lSDL3
+gcc triangulation/heightmap.c triangulation/triangulation.c -o triangulation/heightmap.exe -Ofast
 
 C:\Users\zacha\Documents\programms\idp-mars-rover\triangulation\heightmap.exe "C:/Users/zacha/AppData/Roaming/Godot/app_userdata/idp rover/vertices.txt" "C:/Users/zacha/Documents/programms/idp-mars-rover/triangulation/test.roverheightmap"

@@ -41,10 +41,12 @@ func _process(delta: float) -> void:
 @onready var distance_timer: Timer = $distanceTimer
 @onready var distance_sensors: Node3D = $distanceSensors
 
+const max_terrain_points := 10000
 var terrain_points: Array[Vector3] = []
+var new_point_count := 0
 
 func _on_timer_timeout() -> void:
-	var new_point_count := 0
+	new_point_count = 0
 	for distance_sensor: RayCast3D in distance_sensors.get_children():
 		if not distance_sensor.is_colliding():
 			continue
@@ -57,7 +59,9 @@ func _on_timer_timeout() -> void:
 		if valid:
 			terrain_points.append(collision_point)
 			new_point_count+=1
-	print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
+	#print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
+	while len(terrain_points) > max_terrain_points:
+		terrain_points.pop_front()
 	distance_timer.start()
 
 @export var debug_marker:PackedScene
@@ -150,6 +154,9 @@ func write_terrain_to_file():
 			push_warning("Skipping malformed line: " + line)
 			
 	path_file.close()
+	
+	for child in $temp_Debug.get_children():
+		child.queue_free()
 	
 	for point:Vector3 in points:
 		var new_thing:MeshInstance3D = debug_marker.instantiate()

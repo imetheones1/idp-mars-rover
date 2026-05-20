@@ -8,6 +8,19 @@
 
 #define LINE_LEN 51
 
+typedef struct {
+    vec3 p0;
+    vec3 p1;
+    vec3 p2;
+
+    double min_x;
+    double max_x;
+    double min_z;
+    double max_z;
+
+    double inv_det;
+} prepared_triangle;
+
 vec3_list load_vertices(char *path){
     FILE *file_pointer = fopen(path, "r");
     if (file_pointer == NULL){
@@ -56,21 +69,27 @@ vec3_list load_vertices(char *path){
     };
 }
 
-bool sample_triangle_height(vec3 p0, vec3 p1, vec3 p2, double x, double z, double *out_y) {
-    if ((x>p0.x&&x>p1.x&&x>p2.x)||(x<p0.x&&x<p1.x&&x<p2.x)||(z>p0.z&&z>p1.z&&z>p2.z)||(z<p0.z&&z<p1.z&&z<p2.z)){
+bool sample_triangle_height(
+    const prepared_triangle *tri,
+    double x,
+    double z,
+    double *out_y
+) {
+
+    if (x < tri->min_x || x > tri->max_x || z < tri->min_z || z > tri->max_z) {
         return false;
     }
-    double det = (p1.z - p2.z) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.z - p2.z);
-    
-    if (det == 0.0) return false;
 
-    double l1 = ((p1.z - p2.z) * (x - p2.x) + (p2.x - p1.x) * (z - p2.z)) / det;
-    double l2 = ((p2.z - p0.z) * (x - p2.x) + (p0.x - p2.x) * (z - p2.z)) / det;
+    double l1 = ((tri->p1.z - tri->p2.z) * (x - tri->p2.x) + (tri->p2.x - tri->p1.x) * (z - tri->p2.z)) * tri->inv_det;
+
+    double l2 = ((tri->p2.z - tri->p0.z) * (x - tri->p2.x) + (tri->p0.x - tri->p2.x) * (z - tri->p2.z)) * tri->inv_det;
+
     double l3 = 1.0 - l1 - l2;
 
-    const double eps = -1e-5; 
+    const double eps = -1e-5;
+
     if (l1 >= eps && l2 >= eps && l3 >= eps) {
-        *out_y = l1 * p0.y + l2 * p1.y + l3 * p2.y;
+        *out_y = l1 * tri->p0.y + l2 * tri->p1.y + l3 * tri->p2.y;
         return true;
     }
 
@@ -92,6 +111,55 @@ int main(int argc, char *argv[]) {
 
     vec3_list mesh = load_vertices(argv[1]);
     triangle_list_node *triangles = triangulate_vertices(mesh.vertices,mesh.count);
+
+    size_t triangle_count = 0;
+    triangle_list_node *count_current = triangles;
+
+    while (count_current != NULL) {
+        triangle_count++;
+        count_current = count_current->next;
+    }
+
+    prepared_triangle *prepared = malloc(sizeof(prepared_triangle) * triangle_count);
+
+    if (!prepared) {
+        return 1;
+    }
+
+    triangle_list_node *prep_current = triangles;
+
+    for (size_t i = 0; i < triangle_count; i++) {
+
+        triangle tri = prep_current->triangle;
+
+        vec3 p0 = mesh.vertices[tri.i0];
+        vec3 p1 = mesh.vertices[tri.i1];
+        vec3 p2 = mesh.vertices[tri.i2];
+
+        double det =
+            (p1.z - p2.z) * (p0.x - p2.x) +
+            (p2.x - p1.x) * (p0.z - p2.z);
+
+        if (fabs(det) < 1e-12) {
+            det = 1e-12;
+        }
+
+        prepared[i] = (prepared_triangle){
+            .p0 = p0,
+            .p1 = p1,
+            .p2 = p2,
+
+            .min_x = fmin(p0.x, fmin(p1.x, p2.x)),
+            .max_x = fmax(p0.x, fmax(p1.x, p2.x)),
+
+            .min_z = fmin(p0.z, fmin(p1.z, p2.z)),
+            .max_z = fmax(p0.z, fmax(p1.z, p2.z)),
+
+            .inv_det = 1.0 / det
+        };
+
+        prep_current = prep_current->next;
+    }
 
     double min_x = mesh.vertices[0].x;
     double max_x = mesh.vertices[0].x;
@@ -120,24 +188,23 @@ int main(int argc, char *argv[]) {
             double found_height = 0.0;
             bool hit = false;
 
-            triangle_list_node *current = triangles;
-            while (current != NULL) {
-                triangle tri = current->triangle;
-                
-                vec3 p0 = mesh.vertices[tri.i0];
-                vec3 p1 = mesh.vertices[tri.i1];
-                vec3 p2 = mesh.vertices[tri.i2];
-
-                if (sample_triangle_height(p0, p1, p2, world_x, world_z, &found_height)) {
+            for (size_t i = 0; i < triangle_count; i++) {
+                if (sample_triangle_height(
+                        &prepared[i],
+                        world_x,
+                        world_z,
+                        &found_height
+                )) {
                     hit = true;
-                    break; 
+                    break;
                 }
-                current = current->next;
             }
 
             heightmap[grid_z * width + grid_x] = hit ? found_height : 0.0;
         }
     }
+
+    free(prepared);
 
     // draw to ppn file for debug
 
