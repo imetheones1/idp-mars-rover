@@ -115,6 +115,9 @@ func _process(delta: float) -> void:
 		if distance_to_target <= 3:
 			cur_point += 1
 			return
+		elif distance_to_target > 10:
+			write_terrain_to_file()
+			return
 			
 		var horizontal_distance = (Vector2(current_pos.x,current_pos.z)-Vector2(target_pos.x,target_pos.z)).length_squared()
 		var vertical_distance = abs(current_pos.y-target_pos.y)
@@ -157,6 +160,7 @@ func _process(delta: float) -> void:
 @onready var front_sensors: Node3D = $frontSensors
 
 var terrain_points: Array[Vector3] = []
+#var terrain_point_times: Array[float] = []
 var new_point_count := 0
 var invalid_point_count := 0
 
@@ -164,6 +168,7 @@ var generated_heightmap:HeightmapHolder
 
 var first := true
 func _on_timer_timeout() -> void:
+	#var cur_time := Time.get_ticks_msec()
 	new_point_count = 0
 	for distance_sensor: RayCast3D in distance_sensors.get_children() + front_sensors.get_children():
 		distance_sensor.enabled = true
@@ -182,15 +187,20 @@ func _on_timer_timeout() -> void:
 				break
 		if valid:
 			terrain_points.append(collision_point)
+			#terrain_point_times.append(cur_time)
 			new_point_count+=1
 			if generated_heightmap != null and generated_heightmap.valid:
 				var generated_height = generated_heightmap.get_height_at_world(collision_point.x,collision_point.z)
 				if absf(generated_height-collision_point.y) > 0.5:
 					invalid_point_count+=1
 	#print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
-	if first or invalid_point_count > 100 and cur_state == STATE.FOLLOWING or invalid_point_count > 500:
+	if first or invalid_point_count >= 100 and cur_state == STATE.FOLLOWING or invalid_point_count > 500:
 		write_terrain_to_file()
 	first = false
+	#for n in range(len(terrain_points)-1-new_point_count,-1,-1):
+		#if cur_time-terrain_point_times[n] > 60*1000 and (Vector2(terrain_points[n].x,terrain_points[n].z)-cur_target).length_squared() > 5*5:
+			#terrain_point_times.remove_at(n)
+			#terrain_points.remove_at(n)
 
 @export var debug_marker:PackedScene
 
