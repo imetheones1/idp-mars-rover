@@ -13,6 +13,8 @@ material = SubResource("StandardMaterial3D_ms81d")
 size = Vector2(0.5, 0.5)
 
 [node name="super_awesome_debug_marker" type="MeshInstance3D"]
+cast_shadow = 0
+lod_bias = 0.001
 mesh = SubResource("QuadMesh_vkrsl")
 script = ExtResource("2_ms81d")
 

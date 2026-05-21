@@ -19,7 +19,9 @@ func _process(delta: float) -> void:
 
 func _on_rover_target_one_change(newval: Vector2) -> void:
 	target_indicator.global_position = Vector3(newval.x,0,newval.y)
+	target_indicator.update_target()
 
 
 func _on_rover_target_two_change(newval: Vector2) -> void:
 	target_indicator_2.global_position = Vector3(newval.x,0,newval.y)
+	target_indicator_2.update_target()

@@ -1,10 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://vg3oscvvoq5e"]
+[gd_scene load_steps=3 format=3 uid="uid://vg3oscvvoq5e"]
 
+[ext_resource type="Script" uid="uid://xwa3gd306gn7" path="res://target_indicator.gd" id="1_1qui3"]
 [ext_resource type="Texture2D" uid="uid://cijhdkcvfyaqv" path="res://textures/awesome arrow.png" id="1_hlwlb"]
 
 [node name="target_indicator" type="Node3D"]
+script = ExtResource("1_1qui3")
 
 [node name="target_indicator" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.087461, 0)
 billboard = 2
 texture = ExtResource("1_hlwlb")
+
+[node name="target_cast" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17.519123, 0)
+target_position = Vector3(0, -100, 0)

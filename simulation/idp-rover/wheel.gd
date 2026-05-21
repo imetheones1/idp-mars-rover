@@ -10,7 +10,10 @@ extends RayCast3D
 var spring_stiffness: float = 150.0
 var damping_coefficient: float = 5.0
 
+var is_grounded = false
+
 func calculate_force() -> Vector3:
+	is_grounded = false
 	if not is_colliding():
 		return Vector3.ZERO
 	
@@ -25,6 +28,8 @@ func calculate_force() -> Vector3:
 
 	if compression <= 0.0:
 		return Vector3.ZERO
+		
+	is_grounded = true
 		
 	var wheel_point_velocity = get_point_velocity(global_position)
 	
@@ -60,7 +65,6 @@ func calculate_force() -> Vector3:
 		anti_slide_force = -gravity_parallel*0.25
 
 	return compression_force + forward_friction_force + horizontal_friction_force + anti_slide_force
-
 
 # Helper function to find 3D velocity of any global point on a RigidBody3D
 func get_point_velocity(world_point: Vector3) -> Vector3:

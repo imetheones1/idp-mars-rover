@@ -11,6 +11,18 @@ extends RigidBody3D
 		
 var cur_target:Vector2
 
+@export var teleport : bool
+@export var teleport_target: Vector3
+
+@onready var target_indicator: Sprite3D = $target_indicator
+
+func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
+	if teleport:
+		var new_transform = state.transform
+		new_transform.origin = teleport_target
+		state.transform = new_transform
+		teleport = false
+
 func update_target():
 	var cur_xz := Vector2(global_position.x,global_position.z)
 	
@@ -35,7 +47,7 @@ func damp(a,b,lambda:float,dt:float):
 	return lerp(a,b, 1-exp(-lambda * dt))
 
 func _physics_process(delta: float) -> void:
-	var flip := Input.is_action_just_pressed("ui_accept")
+	var flip := Input.is_action_just_pressed("ui_accept") and DisplayServer.window_is_focused()
 	for wheel: Wheel in wheels.get_children():
 		var force = wheel.calculate_force()
 		if force != Vector3.ZERO:
@@ -76,16 +88,18 @@ var points: Array[Vector3] = []
 var cur_point := 0
 
 func _process(delta: float) -> void:
+	target_indicator.global_position = global_position + Vector3(0,4,0)
 	if cur_state == STATE.DRIVING:
-		var in_dir = Input.get_vector("left","right","backward","forward")
-		var left_power  = in_dir.y + in_dir.x
-		var right_power = in_dir.y - in_dir.x
-		left_power  = clamp(left_power *max_wheel_speed,-max_wheel_speed,max_wheel_speed)
-		right_power = clamp(right_power*max_wheel_speed,-max_wheel_speed,max_wheel_speed)
-		fl.cur_speed = left_power
-		bl.cur_speed = left_power
-		fr.cur_speed = right_power
-		br.cur_speed = right_power
+		if DisplayServer.window_is_focused():
+			var in_dir = Input.get_vector("left","right","backward","forward")
+			var left_power  = in_dir.y + in_dir.x
+			var right_power = in_dir.y - in_dir.x
+			left_power  = clamp(left_power *max_wheel_speed,-max_wheel_speed,max_wheel_speed)
+			right_power = clamp(right_power*max_wheel_speed,-max_wheel_speed,max_wheel_speed)
+			fl.cur_speed = left_power
+			bl.cur_speed = left_power
+			fr.cur_speed = right_power
+			br.cur_speed = right_power
 	elif cur_state == STATE.FOLLOWING:
 		if cur_point >= points.size():
 			print("reached end of path")
@@ -100,6 +114,12 @@ func _process(delta: float) -> void:
 		var distance_to_target = current_pos.distance_to(target_pos)
 		if distance_to_target <= 3:
 			cur_point += 1
+			return
+			
+		var horizontal_distance = (Vector2(current_pos.x,current_pos.z)-Vector2(target_pos.x,target_pos.z)).length_squared()
+		var vertical_distance = abs(current_pos.y-target_pos.y)
+		if horizontal_distance < 1 and vertical_distance > 2:
+			write_terrain_to_file()
 			return
 
 		var dir_to_target = (target_pos - current_pos).normalized()

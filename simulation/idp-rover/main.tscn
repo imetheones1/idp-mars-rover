@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://csqvdxa0lf308"]
+[gd_scene load_steps=5 format=3 uid="uid://csqvdxa0lf308"]
 
 [ext_resource type="Script" uid="uid://b3fd5fumtrscf" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://bjvndbyb8tpv3" path="res://world.tscn" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://b5nnywpl2aoad" path="res://freecamwindow.gd" id="3_1bvp3"]
+[ext_resource type="Script" uid="uid://bu6q0mpfae1fe" path="res://freelookcamera.gd" id="3_h2yge"]
 
 [node name="main" type="Node2D"]
 script = ExtResource("1_0xm2m")
@@ -28,3 +30,18 @@ render_target_update_mode = 4
 [node name="main_label" type="Label" parent="CanvasLayer"]
 offset_right = 40.0
 offset_bottom = 23.0
+
+[node name="FreecamWindow" type="Window" parent="."]
+canvas_item_default_texture_filter = 0
+oversampling_override = 1.0
+title = "Freecam"
+initial_position = 1
+size = Vector2i(800, 600)
+script = ExtResource("3_1bvp3")
+
+[node name="FreeLookCamera" type="Camera3D" parent="FreecamWindow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.86862, 12.391914)
+script = ExtResource("3_h2yge")
+metadata/_custom_type_script = "uid://bu6q0mpfae1fe"
+
+[connection signal="close_requested" from="FreecamWindow" to="." method="_on_freecam_window_close_requested"]
