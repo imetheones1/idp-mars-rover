@@ -168,39 +168,63 @@ var generated_heightmap:HeightmapHolder
 
 var first := true
 func _on_timer_timeout() -> void:
-	#var cur_time := Time.get_ticks_msec()
 	new_point_count = 0
-	for distance_sensor: RayCast3D in distance_sensors.get_children() + front_sensors.get_children():
-		distance_sensor.enabled = true
-		distance_sensor.force_update_transform()
-		distance_sensor.force_raycast_update()
-		if not distance_sensor.is_colliding():
-			continue
-		var collision_point := distance_sensor.get_collision_point()
-		distance_sensor.enabled = false
-		var valid := true
-		var point: Vector3
-		for point_i:int in terrain_points.size():
-			point = terrain_points[-point_i -1]
-			if (point-collision_point).length_squared() < 1:
-				valid = false
-				break
-		if valid:
-			terrain_points.append(collision_point)
-			#terrain_point_times.append(cur_time)
-			new_point_count+=1
-			if generated_heightmap != null and generated_heightmap.valid:
-				var generated_height = generated_heightmap.get_height_at_world(collision_point.x,collision_point.z)
-				if absf(generated_height-collision_point.y) > 0.5:
-					invalid_point_count+=1
-	#print_debug("new points: ",new_point_count,", point count: ",len(terrain_points))
-	if first or invalid_point_count >= 100 and cur_state == STATE.FOLLOWING or invalid_point_count > 500:
+	
+	for sensor: RayCast3D in distance_sensors.get_children():
+		process_sensor(sensor, false)
+		
+	for sensor: RayCast3D in front_sensors.get_children():
+		process_sensor(sensor, true)
+
+	if first or (invalid_point_count >= 100 and cur_state == STATE.FOLLOWING) or invalid_point_count > 500:
 		write_terrain_to_file()
 	first = false
-	#for n in range(len(terrain_points)-1-new_point_count,-1,-1):
-		#if cur_time-terrain_point_times[n] > 60*1000 and (Vector2(terrain_points[n].x,terrain_points[n].z)-cur_target).length_squared() > 5*5:
-			#terrain_point_times.remove_at(n)
-			#terrain_points.remove_at(n)
+
+func process_sensor(sensor: RayCast3D, is_front_sensor: bool) -> void:
+	sensor.enabled = true
+	sensor.force_update_transform()
+	sensor.force_raycast_update()
+	
+	if not sensor.is_colliding():
+		return
+		
+	var collision_point := sensor.get_collision_point()
+	var collision_normal := sensor.get_collision_normal()
+	sensor.enabled = false
+	
+	var is_obstacle := false
+	
+	if is_front_sensor:
+		is_obstacle = true
+	else:
+		if collision_normal.dot(Vector3.UP) < 0.7:
+			is_obstacle = true
+
+	if is_obstacle:
+		collision_point.y += 30.0
+
+	var valid := true
+	var point: Vector3
+	for point_i: int in terrain_points.size():
+		point = terrain_points[-point_i - 1]
+		if (point - collision_point).length_squared() < 1:
+			valid = false
+			break
+			
+	if valid:
+		terrain_points.append(collision_point)
+		new_point_count += 1
+		if is_obstacle:
+			terrain_points.append(collision_point+collision_normal)
+			new_point_count += 1
+		
+		if not is_obstacle and generated_heightmap != null and generated_heightmap.valid:
+			var generated_height = generated_heightmap.get_height_at_world(collision_point.x, collision_point.z)
+			if absf(generated_height - collision_point.y) > 0.5:
+				invalid_point_count += 1
+		
+		if is_obstacle and cur_state == STATE.FOLLOWING:
+			invalid_point_count += 50
 
 @export var debug_marker:PackedScene
 
