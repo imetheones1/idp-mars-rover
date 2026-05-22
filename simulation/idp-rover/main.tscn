@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://csqvdxa0lf308"]
+[gd_scene load_steps=7 format=3 uid="uid://csqvdxa0lf308"]
 
 [ext_resource type="Script" uid="uid://b3fd5fumtrscf" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://bjvndbyb8tpv3" path="res://world.tscn" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://b5nnywpl2aoad" path="res://freecamwindow.gd" id="3_1bvp3"]
 [ext_resource type="Script" uid="uid://bu6q0mpfae1fe" path="res://freelookcamera.gd" id="3_h2yge"]
+[ext_resource type="Texture2D" uid="uid://bb31f3e5xelff" path="res://textures/crosshair.png" id="5_7mycd"]
 [ext_resource type="Script" uid="uid://cb4t2phxi1vim" path="res://configuration_window.gd" id="5_lquwl"]
 
 [node name="main" type="Node2D"]
@@ -44,6 +45,19 @@ script = ExtResource("3_1bvp3")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.86862, 12.391914)
 script = ExtResource("3_h2yge")
 metadata/_custom_type_script = "uid://bu6q0mpfae1fe"
+
+[node name="RayCast3D" type="RayCast3D" parent="FreecamWindow/FreeLookCamera"]
+target_position = Vector3(0, 0, -500)
+
+[node name="Sprite3D" type="Sprite3D" parent="FreecamWindow/FreeLookCamera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.2247152)
+double_sided = false
+no_depth_test = true
+texture = ExtResource("5_7mycd")
+region_enabled = true
+region_rect = Rect2(0, 0, 8.5, 8.5)
+
+[node name="extra" type="Node3D" parent="FreecamWindow"]
 
 [node name="configuration_window" type="Window" parent="."]
 oversampling_override = 1.0
