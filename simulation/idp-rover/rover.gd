@@ -281,6 +281,7 @@ func write_terrain_to_file():
 			print(line)
 	if exit_code != 0:
 		push_error("heightmap generation failed")
+		cur_state = STATE.DRIVING
 		return
 		
 	invalid_point_count = 0
@@ -315,6 +316,7 @@ func write_terrain_to_file():
 			print(line)
 	if exit_code != 0:
 		push_error("path generation failed")
+		cur_state = STATE.DRIVING
 		return
 	
 	points = []

@@ -32,6 +32,7 @@ render_target_update_mode = 4
 [node name="main_label" type="Label" parent="CanvasLayer"]
 offset_right = 40.0
 offset_bottom = 23.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 
 [node name="Label" type="Label" parent="CanvasLayer"]
 anchors_preset = 1
@@ -40,6 +41,7 @@ anchor_right = 1.0
 offset_left = -40.0
 offset_bottom = 23.0
 grow_horizontal = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Controls:
 WASD - Move rover
 Z - Generate path
@@ -78,6 +80,7 @@ region_rect = Rect2(0, 0, 8.5, 8.5)
 [node name="Label" type="Label" parent="FreecamWindow"]
 offset_right = 40.0
 offset_bottom = 23.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Controls:
 Movement - WASD
 Hold right click to rotate
@@ -91,6 +94,14 @@ initial_position = 1
 size = Vector2i(400, 200)
 sharp_corners = true
 script = ExtResource("5_lquwl")
+
+[node name="ColorRect" type="ColorRect" parent="configuration_window"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.39407006, 0.18824631, 0.19593155, 1)
 
 [node name="flatness_weight_slider" type="HSlider" parent="configuration_window"]
 anchors_preset = 10
