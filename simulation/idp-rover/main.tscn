@@ -33,6 +33,22 @@ render_target_update_mode = 4
 offset_right = 40.0
 offset_bottom = 23.0
 
+[node name="Label" type="Label" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 23.0
+grow_horizontal = 0
+text = "Controls:
+WASD - Move rover
+Z - Generate path
+F - Follow path
+Space - Flip rover
+1 - Set first position
+2 - Set second position"
+horizontal_alignment = 2
+
 [node name="FreecamWindow" type="Window" parent="."]
 canvas_item_default_texture_filter = 0
 oversampling_override = 1.0
@@ -58,6 +74,15 @@ region_enabled = true
 region_rect = Rect2(0, 0, 8.5, 8.5)
 
 [node name="extra" type="Node3D" parent="FreecamWindow"]
+
+[node name="Label" type="Label" parent="FreecamWindow"]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Controls:
+Movement - WASD
+Hold right click to rotate
+Press space to teleport rover to camera
+Press Z to spawn obstacle at crosshair"
 
 [node name="configuration_window" type="Window" parent="."]
 oversampling_override = 1.0

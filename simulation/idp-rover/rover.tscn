@@ -56,7 +56,6 @@ material_override = SubResource("StandardMaterial3D_7ff10")
 mesh = SubResource("BoxMesh_44p52")
 
 [node name="distanceSensors" type="Node3D" parent="."]
-visible = false
 
 [node name="RayCast3D" type="RayCast3D" parent="distanceSensors"]
 transform = Transform3D(1, 0, 0, 0, 0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0.98032296, 0)
