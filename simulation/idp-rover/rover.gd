@@ -268,7 +268,7 @@ func write_terrain_to_file():
 	# execute programs
 	var output = []
 	var exit_code = OS.execute(
-		"C:/Users/zacha/Documents/programms/idp-mars-rover/triangulation/heightmap.exe",
+		Paths.heightmap_exe_path,
 		["\"%s\"" % vertex_file_path, "\"%s\"" %  heightmap_path],
 		output,
 		true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://csqvdxa0lf308"]
+[gd_scene load_steps=8 format=3 uid="uid://csqvdxa0lf308"]
 
 [ext_resource type="Script" uid="uid://b3fd5fumtrscf" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://bjvndbyb8tpv3" path="res://world.tscn" id="1_ig7tw"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://bu6q0mpfae1fe" path="res://freelookcamera.gd" id="3_h2yge"]
 [ext_resource type="Texture2D" uid="uid://bb31f3e5xelff" path="res://textures/crosshair.png" id="5_7mycd"]
 [ext_resource type="Script" uid="uid://cb4t2phxi1vim" path="res://configuration_window.gd" id="5_lquwl"]
+[ext_resource type="Texture2D" uid="uid://bi04pin5t4hfy" path="res://textures/News_camera_(with_transparent_background).png" id="6_272bh"]
 
 [node name="main" type="Node2D"]
 script = ExtResource("1_0xm2m")
@@ -74,6 +75,14 @@ no_depth_test = true
 texture = ExtResource("5_7mycd")
 region_enabled = true
 region_rect = Rect2(0, 0, 8.5, 8.5)
+
+[node name="Sprite3D2" type="Sprite3D" parent="FreecamWindow/FreeLookCamera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0022468567)
+pixel_size = 0.0005
+billboard = 1
+double_sided = false
+alpha_cut = 1
+texture = ExtResource("6_272bh")
 
 [node name="extra" type="Node3D" parent="FreecamWindow"]
 
