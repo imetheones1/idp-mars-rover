@@ -8,8 +8,8 @@
 #include <float.h>
 
 #define SQRT_2 1.41421356237f
-#define flatness_weight 5.0f
-#define lateral_weight 10.0f
+// #define flatness_weight 5.0f
+// #define lateral_weight 10.0f
 
 #define MAX_SLOPE 2.0f
 
@@ -108,10 +108,15 @@ static inline float heuristic(int dx, int dy) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 7) {
-        printf("usage: %s input_file output_file start_x start_z goal_x goal_z\n", argv[0]);
+    if (argc != 9) {
+        printf("usage: %s input_file output_file start_x start_z goal_x goal_z flatness_weight lateral_weight\n", argv[0]);
         return 1;
     }
+
+    const double flatness_weight = atof(argv[7]);
+    const double lateral_weight = atof(argv[8]);
+
+    printf("weights: flatness: %f, lateral: %f\n",flatness_weight,lateral_weight);
 
     FILE *file = fopen(argv[1], "rb");
     if (!file) {

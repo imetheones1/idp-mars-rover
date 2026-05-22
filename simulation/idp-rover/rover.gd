@@ -18,8 +18,9 @@ var cur_target:Vector2
 
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	if teleport:
-		var new_transform = state.transform
+		var new_transform := state.transform
 		new_transform.origin = teleport_target
+		new_transform.basis = Basis.IDENTITY
 		state.transform = new_transform
 		teleport = false
 
@@ -83,7 +84,6 @@ func _input(event: InputEvent) -> void:
 @onready var br: Wheel = $wheels/br
 
 const max_wheel_speed := 5
-const max_wheel_speed_following := 4
 var points: Array[Vector3] = []
 var cur_point := 0
 
@@ -144,8 +144,8 @@ func _process(delta: float) -> void:
 		var left_power  = forward_power + steer_power
 		var right_power = forward_power - steer_power
 
-		left_power  = clamp(left_power  * max_wheel_speed_following, -max_wheel_speed_following, max_wheel_speed_following)
-		right_power = clamp(right_power * max_wheel_speed_following, -max_wheel_speed_following, max_wheel_speed_following)
+		left_power  = clamp(left_power  * Globals.rover_pathing_speed, -Globals.rover_pathing_speed, Globals.rover_pathing_speed)
+		right_power = clamp(right_power * Globals.rover_pathing_speed, -Globals.rover_pathing_speed, Globals.rover_pathing_speed)
 
 		fl.cur_speed = left_power
 		bl.cur_speed = left_power
@@ -268,7 +268,9 @@ func write_terrain_to_file():
 			global_position.x,
 			global_position.z,
 			cur_target.x,
-			cur_target.y
+			cur_target.y,
+			Globals.pathfinding_flatness_weight,
+			Globals.pathfinding_lateral_weight
 		],
 		output,
 		true

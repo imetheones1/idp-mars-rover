@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://csqvdxa0lf308"]
+[gd_scene load_steps=6 format=3 uid="uid://csqvdxa0lf308"]
 
 [ext_resource type="Script" uid="uid://b3fd5fumtrscf" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://bjvndbyb8tpv3" path="res://world.tscn" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://b5nnywpl2aoad" path="res://freecamwindow.gd" id="3_1bvp3"]
 [ext_resource type="Script" uid="uid://bu6q0mpfae1fe" path="res://freelookcamera.gd" id="3_h2yge"]
+[ext_resource type="Script" uid="uid://cb4t2phxi1vim" path="res://configuration_window.gd" id="5_lquwl"]
 
 [node name="main" type="Node2D"]
 script = ExtResource("1_0xm2m")
@@ -44,4 +45,79 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.86862, 12.391914)
 script = ExtResource("3_h2yge")
 metadata/_custom_type_script = "uid://bu6q0mpfae1fe"
 
+[node name="configuration_window" type="Window" parent="."]
+oversampling_override = 1.0
+title = "config"
+initial_position = 1
+size = Vector2i(400, 200)
+sharp_corners = true
+script = ExtResource("5_lquwl")
+
+[node name="flatness_weight_slider" type="HSlider" parent="configuration_window"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -2.0
+offset_top = 18.0
+offset_right = -2.0
+offset_bottom = 34.0
+grow_horizontal = 2
+max_value = 30.0
+step = 0.25
+value = 5.0
+
+[node name="Label" type="Label" parent="configuration_window/flatness_weight_slider"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = -12.0
+offset_right = 136.0
+offset_bottom = 11.0
+theme_override_font_sizes/font_size = 10
+text = "Pathfinding flatness weight: 5.0"
+
+[node name="lateral_weight_slider" type="HSlider" parent="configuration_window"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -1.0
+offset_top = 50.0
+offset_right = -1.0
+offset_bottom = 66.0
+grow_horizontal = 2
+max_value = 30.0
+step = 0.25
+value = 10.0
+
+[node name="Label" type="Label" parent="configuration_window/lateral_weight_slider"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = -12.0
+offset_right = 136.0
+offset_bottom = 11.0
+theme_override_font_sizes/font_size = 10
+text = "Pathfinding lateral weight: 10.0"
+
+[node name="rover_speed_slider" type="HSlider" parent="configuration_window"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -2.0
+offset_top = 82.0
+offset_right = -2.0
+offset_bottom = 98.0
+grow_horizontal = 2
+max_value = 10.0
+step = 0.5
+value = 4.0
+
+[node name="Label" type="Label" parent="configuration_window/rover_speed_slider"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = -12.0
+offset_right = 136.0
+offset_bottom = 11.0
+theme_override_font_sizes/font_size = 10
+text = "Rover speed when pathing: 4.0"
+
 [connection signal="close_requested" from="FreecamWindow" to="." method="_on_freecam_window_close_requested"]
+[connection signal="close_requested" from="configuration_window" to="." method="_on_configuration_window_close_requested"]
+[connection signal="value_changed" from="configuration_window/flatness_weight_slider" to="configuration_window" method="_on_flatness_weight_slider_value_changed"]
+[connection signal="value_changed" from="configuration_window/lateral_weight_slider" to="configuration_window" method="_on_lateral_weight_slider_value_changed"]
+[connection signal="value_changed" from="configuration_window/rover_speed_slider" to="configuration_window" method="_on_rover_speed_slider_value_changed"]

@@ -20,3 +20,7 @@ func _process(delta: float) -> void:
 
 func _on_freecam_window_close_requested() -> void:
 	get_tree().quit()
+
+
+func _on_configuration_window_close_requested() -> void:
+	get_tree().quit()
