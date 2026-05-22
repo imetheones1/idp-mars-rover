@@ -572,4 +572,6 @@ transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 3.984118, 0)
 billboard = 2
 texture = ExtResource("5_44p52")
 
+[node name="pointsDisplay" type="Node3D" parent="."]
+
 [connection signal="timeout" from="distanceTimer" to="." method="_on_timer_timeout"]

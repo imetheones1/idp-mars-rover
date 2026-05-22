@@ -164,11 +164,17 @@ var terrain_points: Array[Vector3] = []
 var new_point_count := 0
 var invalid_point_count := 0
 
+@onready var points_display: Node3D = $pointsDisplay
+const POINT_MARKER = preload("uid://dr0m0cjrp6047")
+
 var generated_heightmap:HeightmapHolder
 
 var first := true
 func _on_timer_timeout() -> void:
 	new_point_count = 0
+	
+	#for point:Node3D in points_display.get_children():
+		#point.queue_free()
 	
 	for sensor: RayCast3D in distance_sensors.get_children():
 		process_sensor(sensor, false)
@@ -217,6 +223,11 @@ func process_sensor(sensor: RayCast3D, is_front_sensor: bool) -> void:
 		if is_obstacle:
 			terrain_points.append(collision_point+collision_normal)
 			new_point_count += 1
+		
+		var new:Node3D = POINT_MARKER.instantiate()
+		points_display.add_child(new)
+		new.global_position = collision_point
+		new.top_level = true
 		
 		if not is_obstacle and generated_heightmap != null and generated_heightmap.valid:
 			var generated_height = generated_heightmap.get_height_at_world(collision_point.x, collision_point.z)
