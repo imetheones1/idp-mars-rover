@@ -341,16 +341,68 @@ func write_terrain_to_file():
 			
 	path_file.close()
 	
-	for child in $temp_Debug.get_children():
-		child.queue_free()
-	
-	for point:Vector3 in points:
-		var new_thing:MeshInstance3D = debug_marker.instantiate()
-		$temp_Debug.add_child(new_thing)
-		new_thing.global_position = point
-		new_thing.global_position.y += 1
-		new_thing.top_level = true
-	
 	cur_point = 0
-	
 	print()
+	
+	if points.size() < 2:
+		$PathVisualizer.mesh = null
+		return
+
+	var st := SurfaceTool.new()
+
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var path_width := 0.35
+
+	var left_points := []
+	var right_points := []
+
+	for i in range(points.size()):
+
+		var forward : Vector3
+
+		if i == 0:
+			forward = (points[1] - points[0]).normalized()
+
+		elif i == points.size() - 1:
+			forward = (points[i] - points[i - 1]).normalized()
+
+		else:
+			var dir_prev = (points[i] - points[i - 1]).normalized()
+			var dir_next = (points[i + 1] - points[i]).normalized()
+
+			forward = (dir_prev + dir_next).normalized()
+
+			if forward.length_squared() < 0.001:
+				forward = dir_next
+
+		var right = forward.cross(Vector3.UP).normalized()
+
+		var left_pos = points[i] - right * path_width
+		var right_pos = points[i] + right * path_width
+
+		left_pos.y += 0.05
+		right_pos.y += 0.05
+
+		left_points.append(left_pos)
+		right_points.append(right_pos)
+
+	for i in range(points.size() - 1):
+
+		var a = left_points[i]
+		var b = right_points[i]
+
+		var c = left_points[i + 1]
+		var d = right_points[i + 1]
+
+		st.add_vertex(b)
+		st.add_vertex(a)
+		st.add_vertex(c)
+
+		st.add_vertex(b)
+		st.add_vertex(c)
+		st.add_vertex(d)
+
+	var mesh := st.commit()
+
+	$PathVisualizer.mesh = mesh

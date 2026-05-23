@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://crm2nhxk0k6pa"]
+[gd_scene load_steps=10 format=3 uid="uid://crm2nhxk0k6pa"]
 
 [ext_resource type="PackedScene" uid="uid://c4lrqpf05kju5" path="res://wheel.tscn" id="1_8cnl3"]
 [ext_resource type="Script" uid="uid://y4uyar50yfl4" path="res://rover.gd" id="1_d4gi6"]
@@ -15,6 +15,13 @@ uv1_triplanar = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_44p52"]
 size = Vector3(2, 0.5, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_44p52"]
+transparency = 1
+cull_mode = 2
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(0.5568628, 0.65882355, 1, 0.75686276)
 
 [node name="rover" type="RigidBody3D"]
 collision_layer = 2
@@ -573,5 +580,10 @@ billboard = 2
 texture = ExtResource("5_44p52")
 
 [node name="pointsDisplay" type="Node3D" parent="."]
+
+[node name="PathVisualizer" type="MeshInstance3D" parent="."]
+top_level = true
+material_override = SubResource("StandardMaterial3D_44p52")
+cast_shadow = 0
 
 [connection signal="timeout" from="distanceTimer" to="." method="_on_timer_timeout"]
