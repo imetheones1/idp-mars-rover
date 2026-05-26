@@ -71,10 +71,36 @@ func _physics_process(delta: float) -> void:
 			apply_force(global_basis.y * 10 * sign(wheel.position.x), wheel.global_position - global_position)
 	if flip:
 		apply_force(Vector3.UP * 100,Vector3.ZERO)
+		
+@onready var display_multi_mesh: MultiMeshInstance3D = $display/display_multi_mesh
+const display_lidar_length := 10
 
-# Called when the node enters the scene tree for the first timwe.
 func _ready() -> void:
-	pass # Replace with function body.
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.instance_count = distance_sensors.get_child_count() + front_sensors.get_child_count()
+	
+	var cylinder := CylinderMesh.new()
+	cylinder.top_radius = 0.005
+	cylinder.bottom_radius = 0.005
+	cylinder.height = display_lidar_length
+	cylinder.radial_segments = 4
+	cylinder.rings = 1
+	
+	mm.mesh = cylinder
+	display_multi_mesh.multimesh = mm
+	
+	var i := 0
+	for ray:RayCast3D in distance_sensors.get_children() + front_sensors.get_children():
+		var start_pos = ray.position
+		var direction = ray.transform.basis * ray.target_position.normalized()
+		var xform := Transform3D()
+		xform = xform.looking_at(direction, Vector3.UP)
+		xform.basis = xform.basis.rotated(xform.basis.x, deg_to_rad(90))
+		xform.origin = start_pos
+		xform.origin += direction * (display_lidar_length / 2.0)
+		mm.set_instance_transform(i, xform)
+		i+=1
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey:
