@@ -8,6 +8,19 @@ extends RigidBody3D
 	set(val):
 		target_two = val
 		target_two_change.emit(val)
+
+func add_target_point(target:int,point:Vector3):
+	if target != 1 and target != 2:
+		return
+	
+	terrain_points.append(point)
+	
+	if target == 1:
+		target_one = Vector2(point.x,point.z)
+		cur_target = target_two
+	elif target == 2:
+		target_two = Vector2(point.x,point.z)
+		cur_target = target_one
 		
 var cur_target:Vector2
 
@@ -18,6 +31,7 @@ var cur_target:Vector2
 
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	if teleport:
+		self.sleeping = false
 		var new_transform := state.transform
 		new_transform.origin = teleport_target
 		new_transform.basis = Basis.IDENTITY
@@ -70,7 +84,7 @@ func _input(event: InputEvent) -> void:
 			if cur_state == STATE.DRIVING:
 				cur_state = STATE.FOLLOWING
 				cur_point = 0
-				update_target()
+				#update_target()
 			elif cur_state == STATE.FOLLOWING:
 				cur_state = STATE.DRIVING
 		elif event.is_action_pressed("set_target_1"):
@@ -83,9 +97,13 @@ func _input(event: InputEvent) -> void:
 @onready var bl: Wheel = $wheels/bl
 @onready var br: Wheel = $wheels/br
 
+@onready var point_indicator: Sprite3D = $pointIndicator
+
 const max_wheel_speed := 5
 var points: Array[Vector3] = []
 var cur_point := 0
+
+var distance_to_target:float = 0
 
 func _process(delta: float) -> void:
 	target_indicator.global_position = global_position + Vector3(0,4,0)
@@ -100,6 +118,12 @@ func _process(delta: float) -> void:
 			bl.cur_speed = left_power
 			fr.cur_speed = right_power
 			br.cur_speed = right_power
+		else:
+			fl.cur_speed = 0
+			bl.cur_speed = 0
+			fr.cur_speed = 0
+			br.cur_speed = 0
+		point_indicator.visible = false
 	elif cur_state == STATE.FOLLOWING:
 		if cur_point >= points.size():
 			print("reached end of path")
@@ -107,15 +131,17 @@ func _process(delta: float) -> void:
 			write_terrain_to_file()
 			#cur_state = STATE.DRIVING
 			return
+		point_indicator.visible = true
+		point_indicator.global_position = points[cur_point]
 
 		var target_pos = points[cur_point]
 		var current_pos = global_position 
 		
-		var distance_to_target = current_pos.distance_to(target_pos)
+		distance_to_target = current_pos.distance_to(target_pos)
 		if distance_to_target <= 3:
 			cur_point += 1
 			return
-		elif distance_to_target > 10:
+		elif distance_to_target > 20:
 			write_terrain_to_file()
 			return
 			
@@ -238,8 +264,14 @@ func process_sensor(sensor: RayCast3D, is_front_sensor: bool) -> void:
 			invalid_point_count += 50
 
 @export var debug_marker:PackedScene
+@onready var delay_timer: Timer = $delay_timer
+
+var has_path := false
 
 func write_terrain_to_file():
+	if delay_timer.time_left > 0:
+		return
+	delay_timer.start()
 	print_debug("\nbeginning everything")
 	var app_dir = "user://vertices.txt"
 	var file := FileAccess.open(app_dir,FileAccess.WRITE)
@@ -316,8 +348,10 @@ func write_terrain_to_file():
 			print(line)
 	if exit_code != 0:
 		push_error("path generation failed")
+		has_path = false
 		cur_state = STATE.DRIVING
 		return
+	has_path = true
 	
 	points = []
 	var path_file := FileAccess.open("user://path.roverpath",FileAccess.READ)

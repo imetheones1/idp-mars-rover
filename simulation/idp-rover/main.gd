@@ -13,10 +13,13 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	main_label.text = "fps: %f\n" % Engine.get_frames_per_second()
 	main_label.text+= "position: (%.2f, %.2f, %.2f)\n" % [rover.global_position.x,rover.global_position.y,rover.global_position.z]
+	main_label.text+= "current path point: %d\n" % rover.cur_point
+	main_label.text+= "distance to current path point: %f\n" % rover.distance_to_target
 	main_label.text+= "vertex count: %d\n" % len(rover.terrain_points)
 	main_label.text+= "new vertices: %d\n" % rover.new_point_count
 	main_label.text+= "invalid vertices: %d\n" % rover.invalid_point_count
-
+	if !rover.has_path:
+		main_label.text+= "ERROR: Rover cannot find path. Please manually route around obstacle."
 
 func _on_freecam_window_close_requested() -> void:
 	get_tree().quit()

@@ -93,8 +93,11 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Controls:
 Movement - WASD
 Hold right click to rotate
-Press space to teleport rover to camera
-Press Z to spawn obstacle at crosshair"
+Space - Teleport Rover to Camera
+
+Z - Spawn obstacle at crosshair
+1 - Set target one at crosshair
+2 - Set target two at crosshair"
 
 [node name="configuration_window" type="Window" parent="."]
 oversampling_override = 1.0

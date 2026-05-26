@@ -13,6 +13,8 @@ func _process(delta: float) -> void:
 	pass
 
 func update_target():
+	target_cast.force_update_transform()
+	target_cast.force_raycast_update()
 	if target_cast.is_colliding():
 		target_indicator.global_position = target_cast.get_collision_point() + Vector3(0,10,0)
 	else:

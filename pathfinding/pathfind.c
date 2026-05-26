@@ -10,6 +10,8 @@
 #define SQRT_2 1.41421356237f
 // #define flatness_weight 5.0f
 // #define lateral_weight 10.0f
+#define MAX_WORLD_DISTANCE 15.0f
+#define MAX_WORLD_DIST_SQ (MAX_WORLD_DISTANCE * MAX_WORLD_DISTANCE)
 
 #define MAX_SLOPE 2.0f
 
@@ -388,6 +390,7 @@ int main(int argc, char *argv[]) {
 
             if (!path) {
                 printf("path allocation failed\n");
+                fclose(out);
                 return 1;
             }
 
@@ -395,51 +398,88 @@ int main(int argc, char *argv[]) {
 
             while (current != -1) {
                 if (path_count >= path_capacity) {
-
                     path_capacity *= 2;
+                    int32_t *temp = realloc(path, path_capacity * sizeof(int32_t));
 
-                    path = realloc(
-                        path,
-                        path_capacity * sizeof(int32_t)
-                    );
-
-                    if (!path) {
+                    if (!temp) {
                         printf("path realloc failed");
+                        free(path);
+                        fclose(out);
                         return 1;
                     }
+                    path = temp;
                 }
 
                 path[path_count++] = current;
-
                 current = came_from[current];
             }
 
+            size_t written_vertices = 0;
+            
+            float last_written_world_x = -1e9f;
+            float last_written_world_y = -1e9f;
+            float last_written_world_z = -1e9f;
+
             for (size_t i = path_count; i > 0; i--) {
-                int idx = path[i - 1];
+                size_t curr_idx_in_array = i - 1;
+                int idx = path[curr_idx_in_array];
 
                 int map_x = idx % width;
                 int map_y = idx / width;
 
                 float world_x = (float)min_x + ((float)map_x * real_pixel_size);
-
                 float world_z = (float)min_z + ((float)map_y * real_pixel_size);
-
                 float world_y = heightmap[idx];
 
-                fprintf(
-                    out,
-                    "%f,%f,%f\n",
-                    world_x,
-                    world_y,
-                    world_z
-                );
+                int keep_vertex = 0;
+
+                if (i == path_count) {
+                    keep_vertex = 1;
+                } else if (i == 1) {
+                    keep_vertex = 1;
+                } else {
+                    float dist_x = world_x - last_written_world_x;
+                    float dist_y = world_y - last_written_world_y;
+                    float dist_z = world_z - last_written_world_z;
+
+                    float distance_sq_since_last_write = (dist_x * dist_x) + (dist_y * dist_y) + (dist_z * dist_z);
+
+                    if (distance_sq_since_last_write >= MAX_WORLD_DIST_SQ) {
+                        keep_vertex = 1;
+                    } else {
+                        int prev_idx = path[curr_idx_in_array + 1];
+                        int next_idx = path[curr_idx_in_array - 1];
+
+                        int prev_x = prev_idx % width;
+                        int prev_y = prev_idx / width;
+                        int next_x = next_idx % width;
+                        int next_y = next_idx / width;
+
+                        int dx1 = map_x - prev_x;
+                        int dy1 = map_y - prev_y;
+                        int dx2 = next_x - map_x;
+                        int dy2 = next_y - map_y;
+
+                        if (dx1 != dx2 || dy1 != dy2) {
+                            keep_vertex = 1;
+                        }
+                    }
+                }
+
+                if (keep_vertex) {
+                    fprintf(out, "%f,%f,%f\n", world_x, world_y, world_z);
+                    written_vertices++;
+
+                    last_written_world_x = world_x;
+                    last_written_world_y = world_y;
+                    last_written_world_z = world_z;
+                }
             }
 
             fclose(out);
-
             free(path);
 
-            printf("successfully wrote %zu vertices to %s\n",path_count,argv[2]);
+            printf("successfully wrote %zu vertices to %s (compressed down from %zu)\n", written_vertices, argv[2], path_count);
         }
     } else {
         printf("no valid path");

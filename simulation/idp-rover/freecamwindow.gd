@@ -21,6 +21,18 @@ func _input(event: InputEvent) -> void:
 				extra.add_child(cur)
 				cur.global_position = ray_cast_3d.get_collision_point()
 				cur.global_position += Vector3.UP
+		elif event.is_action_pressed("set_target_1"):
+			if ray_cast_3d.is_colliding():
+				var collision_point := ray_cast_3d.get_collision_point()
+				rover.add_target_point(1,collision_point)
+				rover.teleport_target = collision_point + Vector3(0,2,0)
+				rover.teleport = true
+		elif event.is_action_pressed("set_target_2"):
+			if ray_cast_3d.is_colliding():
+				var collision_point := ray_cast_3d.get_collision_point()
+				rover.add_target_point(2,collision_point)
+				rover.teleport_target = collision_point + Vector3(0,2,0)
+				rover.teleport = true
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

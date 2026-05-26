@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://crm2nhxk0k6pa"]
+[gd_scene load_steps=11 format=3 uid="uid://crm2nhxk0k6pa"]
 
 [ext_resource type="PackedScene" uid="uid://c4lrqpf05kju5" path="res://wheel.tscn" id="1_8cnl3"]
 [ext_resource type="Script" uid="uid://y4uyar50yfl4" path="res://rover.gd" id="1_d4gi6"]
 [ext_resource type="PackedScene" uid="uid://cwrf5oxckf4o8" path="res://super_awesome_debug_marker.tscn" id="2_7ff10"]
 [ext_resource type="Texture2D" uid="uid://u2r68jj3q4ae" path="res://textures/prototype/PNG/Green/texture_10.png" id="3_d4gi6"]
 [ext_resource type="Texture2D" uid="uid://cijhdkcvfyaqv" path="res://textures/awesome arrow.png" id="5_44p52"]
+[ext_resource type="Texture2D" uid="uid://b6gocup3soi0j" path="res://textures/target.png" id="6_ahhn0"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_jfj6g"]
 size = Vector3(2, 0.5, 2)
@@ -585,5 +586,16 @@ texture = ExtResource("5_44p52")
 top_level = true
 material_override = SubResource("StandardMaterial3D_44p52")
 cast_shadow = 0
+
+[node name="pointIndicator" type="Sprite3D" parent="."]
+top_level = true
+pixel_size = 0.005
+billboard = 1
+no_depth_test = true
+texture = ExtResource("6_ahhn0")
+
+[node name="delay_timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
 
 [connection signal="timeout" from="distanceTimer" to="." method="_on_timer_timeout"]
