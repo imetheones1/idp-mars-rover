@@ -49,7 +49,8 @@ Z - Generate path
 F - Follow path
 Space - Flip rover
 1 - Set first position
-2 - Set second position"
+2 - Set second position
+R - Reset rover position and terrain"
 horizontal_alignment = 2
 
 [node name="FreecamWindow" type="Window" parent="."]

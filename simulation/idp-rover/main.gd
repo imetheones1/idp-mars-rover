@@ -19,7 +19,7 @@ func _process(delta: float) -> void:
 	main_label.text+= "new vertices: %d\n" % rover.new_point_count
 	main_label.text+= "invalid vertices: %d\n" % rover.invalid_point_count
 	if !rover.has_path:
-		main_label.text+= "ERROR: Rover cannot find path. Please manually route around obstacle."
+		main_label.text+= "ERROR: Rover cannot find path. \nPlease manually route to target or attempt to regenerate."
 
 func _on_freecam_window_close_requested() -> void:
 	get_tree().quit()

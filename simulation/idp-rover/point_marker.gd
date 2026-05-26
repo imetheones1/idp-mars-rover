@@ -12,4 +12,6 @@ func _process(delta: float) -> void:
 
 
 func _on_timer_timeout() -> void:
+	if is_queued_for_deletion():
+		return
 	queue_free()

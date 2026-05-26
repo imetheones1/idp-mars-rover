@@ -31,7 +31,7 @@ var cur_target:Vector2
 
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	if teleport:
-		self.sleeping = false
+		sleeping = false
 		var new_transform := state.transform
 		new_transform.origin = teleport_target
 		new_transform.basis = Basis.IDENTITY
@@ -117,6 +117,16 @@ func _input(event: InputEvent) -> void:
 			target_one = Vector2(global_position.x,global_position.z)
 		elif event.is_action_pressed("set_target_2"):
 			target_two = Vector2(global_position.x,global_position.z)
+		elif event.is_action_pressed("reset"):
+			teleport_target = Vector3(0,6,0)
+			teleport = true
+			terrain_points = []
+			for child in points_display.get_children():
+				child.queue_free()
+			target_one = Vector2.ZERO
+			target_two = Vector2.ZERO
+			sleeping = false
+			cur_state = STATE.DRIVING
 
 @onready var fl: Wheel = $wheels/fl
 @onready var fr: Wheel = $wheels/fr
@@ -159,6 +169,17 @@ func _process(delta: float) -> void:
 			return
 		point_indicator.visible = true
 		point_indicator.global_position = points[cur_point]
+		
+		var rover_up = global_transform.basis.y
+		var up_dot = rover_up.dot(Vector3.UP)
+		
+		if up_dot < 0.8:
+			# agressively attempt to stabilize self
+			fl.cur_speed = -10
+			bl.cur_speed = -10
+			fr.cur_speed = -10
+			br.cur_speed = -10
+			return 
 
 		var target_pos = points[cur_point]
 		var current_pos = global_position 
@@ -176,6 +197,9 @@ func _process(delta: float) -> void:
 		if horizontal_distance < 1 and vertical_distance > 2:
 			write_terrain_to_file()
 			return
+		
+		var left_power : float = 0.0
+		var right_power : float = 0.0
 
 		var dir_to_target = (target_pos - current_pos).normalized()
 
@@ -193,8 +217,8 @@ func _process(delta: float) -> void:
 			forward_power = 0.0
 			steer_power = sign(right_dot)
 
-		var left_power  = forward_power + steer_power
-		var right_power = forward_power - steer_power
+		left_power  = forward_power + steer_power
+		right_power = forward_power - steer_power
 
 		left_power  = clamp(left_power  * Globals.rover_pathing_speed, -Globals.rover_pathing_speed, Globals.rover_pathing_speed)
 		right_power = clamp(right_power * Globals.rover_pathing_speed, -Globals.rover_pathing_speed, Globals.rover_pathing_speed)
