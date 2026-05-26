@@ -90,3 +90,9 @@ func _process(delta: float) -> void:
 		target_position = local_down.normalized() * radius*1.1
 	else:
 		target_position = Vector3(0, -radius*1.1, 0)
+
+	var angular_velocity = 0.0
+	if radius > 0.0:
+		angular_velocity = cur_speed / radius
+	
+	$mesh.rotation_degrees.x -= angular_velocity
