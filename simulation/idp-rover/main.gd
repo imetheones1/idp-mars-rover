@@ -3,6 +3,7 @@ extends Node2D
 @onready var main_label: Label = $CanvasLayer/main_label
 @onready var rover:RigidBody3D = $"3d/SubViewportContainer/SubViewport/world".rover
 @onready var freecam_window: Window = $FreecamWindow
+@onready var bird_window: Window = $BirdWindow
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -20,10 +21,14 @@ func _process(delta: float) -> void:
 	main_label.text+= "invalid vertices: %d\n" % rover.invalid_point_count
 	if !rover.has_path:
 		main_label.text+= "ERROR: Rover cannot find path. \nPlease manually route to target or attempt to regenerate."
+		
+	bird_window.target_one = rover.target_one
+	bird_window.target_two = rover.target_two
+	bird_window.rover = Vector2(rover.global_position.x,rover.global_position.z)
 
 func _on_freecam_window_close_requested() -> void:
 	get_tree().quit()
-
-
 func _on_configuration_window_close_requested() -> void:
+	get_tree().quit()
+func _on_bird_window_close_requested() -> void:
 	get_tree().quit()

@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://dij4sqgg7e8lq" path="res://obstacle.gd" id="1_sl1jc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qcbvg"]
-size = Vector3(4, 100, 4)
+size = Vector3(4, 20, 4)
 
 [sub_resource type="BoxMesh" id="BoxMesh_qcbvg"]
-size = Vector3(4, 100, 4)
+size = Vector3(4, 20, 4)
 
 [node name="obstacle" type="Node3D"]
 script = ExtResource("1_sl1jc")

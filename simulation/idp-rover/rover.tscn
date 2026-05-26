@@ -589,8 +589,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0, -1)
 target_position = Vector3(0, 0, -4)
 
 [node name="target_indicator" type="Sprite3D" parent="."]
-transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 3.984118, 0)
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0.9669287, 0)
+layers = 6
+offset = Vector2(0, 400)
 billboard = 2
+texture = ExtResource("5_44p52")
+
+[node name="target_indicator2" type="Sprite3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
+layers = 4
+offset = Vector2(0, 800)
+pixel_size = 0.0002
+billboard = 1
+no_depth_test = true
+fixed_size = true
 texture = ExtResource("5_44p52")
 
 [node name="pointsDisplay" type="Node3D" parent="."]

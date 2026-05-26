@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://csqvdxa0lf308"]
+[gd_scene load_steps=10 format=3 uid="uid://csqvdxa0lf308"]
 
 [ext_resource type="Script" uid="uid://b3fd5fumtrscf" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://bjvndbyb8tpv3" path="res://world.tscn" id="1_ig7tw"]
@@ -7,6 +7,13 @@
 [ext_resource type="Texture2D" uid="uid://bb31f3e5xelff" path="res://textures/crosshair.png" id="5_7mycd"]
 [ext_resource type="Script" uid="uid://cb4t2phxi1vim" path="res://configuration_window.gd" id="5_lquwl"]
 [ext_resource type="Texture2D" uid="uid://bi04pin5t4hfy" path="res://textures/News_camera_(with_transparent_background).png" id="6_272bh"]
+[ext_resource type="Script" uid="uid://du06qt43xxwge" path="res://bird_window.gd" id="8_5vw27"]
+
+[sub_resource type="Environment" id="Environment_5vw27"]
+adjustment_enabled = true
+adjustment_brightness = 1.06
+adjustment_contrast = 0.95
+adjustment_saturation = 1.11
 
 [node name="main" type="Node2D"]
 script = ExtResource("1_0xm2m")
@@ -63,6 +70,7 @@ script = ExtResource("3_1bvp3")
 
 [node name="FreeLookCamera" type="Camera3D" parent="FreecamWindow"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.86862, 12.391914)
+cull_mask = 1048571
 script = ExtResource("3_h2yge")
 metadata/_custom_type_script = "uid://bu6q0mpfae1fe"
 
@@ -95,10 +103,12 @@ text = "Controls:
 Movement - WASD
 Hold right click to rotate
 Space - Teleport Rover to Camera
+Shift+Space - Teleport Camera to Rover
 
 Z - Spawn obstacle at crosshair
 1 - Set target one at crosshair
-2 - Set target two at crosshair"
+2 - Set target two at crosshair
+F - Teleport rover to crosshair"
 
 [node name="configuration_window" type="Window" parent="."]
 oversampling_override = 1.0
@@ -179,8 +189,24 @@ offset_bottom = 11.0
 theme_override_font_sizes/font_size = 10
 text = "Rover speed when pathing: 4.0"
 
+[node name="BirdWindow" type="Window" parent="."]
+oversampling_override = 1.0
+title = "birds eye view"
+initial_position = 1
+size = Vector2i(800, 600)
+script = ExtResource("8_5vw27")
+
+[node name="CameraPivot" type="Node3D" parent="BirdWindow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.990173, 0)
+
+[node name="Camera3D" type="Camera3D" parent="BirdWindow/CameraPivot"]
+cull_mask = 1048573
+environment = SubResource("Environment_5vw27")
+projection = 1
+
 [connection signal="close_requested" from="FreecamWindow" to="." method="_on_freecam_window_close_requested"]
 [connection signal="close_requested" from="configuration_window" to="." method="_on_configuration_window_close_requested"]
 [connection signal="value_changed" from="configuration_window/flatness_weight_slider" to="configuration_window" method="_on_flatness_weight_slider_value_changed"]
 [connection signal="value_changed" from="configuration_window/lateral_weight_slider" to="configuration_window" method="_on_lateral_weight_slider_value_changed"]
 [connection signal="value_changed" from="configuration_window/rover_speed_slider" to="configuration_window" method="_on_rover_speed_slider_value_changed"]
+[connection signal="close_requested" from="BirdWindow" to="." method="_on_bird_window_close_requested"]

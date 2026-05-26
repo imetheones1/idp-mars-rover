@@ -106,6 +106,9 @@ reset={
 
 [layer_names]
 
+3d_render/layer_1="rover"
+3d_render/layer_2="freecam"
+3d_render/layer_3="bird"
 3d_physics/layer_1="world"
 3d_physics/layer_2="rover"
 
