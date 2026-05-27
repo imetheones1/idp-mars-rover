@@ -1,10 +1,11 @@
-[gd_scene load_steps=16 format=3 uid="uid://crm2nhxk0k6pa"]
+[gd_scene load_steps=20 format=3 uid="uid://crm2nhxk0k6pa"]
 
 [ext_resource type="PackedScene" uid="uid://c4lrqpf05kju5" path="res://wheel.tscn" id="1_8cnl3"]
 [ext_resource type="Script" uid="uid://y4uyar50yfl4" path="res://rover.gd" id="1_d4gi6"]
 [ext_resource type="PackedScene" uid="uid://cwrf5oxckf4o8" path="res://super_awesome_debug_marker.tscn" id="2_7ff10"]
 [ext_resource type="Material" uid="uid://e2hjqq4x54t5" path="res://materials/rover_body.tres" id="4_ahhn0"]
 [ext_resource type="Texture2D" uid="uid://cijhdkcvfyaqv" path="res://textures/awesome arrow.png" id="5_44p52"]
+[ext_resource type="Texture2D" uid="uid://cdcun33jgxkdr" path="res://textures/dot.png" id="6_74wku"]
 [ext_resource type="Texture2D" uid="uid://b6gocup3soi0j" path="res://textures/target.png" id="6_ahhn0"]
 [ext_resource type="Material" uid="uid://dpwjyg6dbgswf" path="res://materials/lidar_texture.tres" id="7_ioov1"]
 
@@ -13,6 +14,22 @@ size = Vector3(2, 0.5, 2)
 
 [sub_resource type="BoxMesh" id="BoxMesh_44p52"]
 size = Vector3(2, 0.5, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3bbuy"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+shading_mode = 0
+albedo_texture = ExtResource("6_74wku")
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_oo45y"]
+material = SubResource("StandardMaterial3D_3bbuy")
+size = Vector2(0.1, 0.1)
+
+[sub_resource type="MultiMesh" id="MultiMesh_o3v7q"]
+transform_format = 1
+mesh = SubResource("QuadMesh_oo45y")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_44p52"]
 transparency = 1
@@ -604,6 +621,11 @@ billboard = 1
 no_depth_test = true
 fixed_size = true
 texture = ExtResource("5_44p52")
+
+[node name="pointsMesh" type="MultiMeshInstance3D" parent="."]
+top_level = true
+cast_shadow = 0
+multimesh = SubResource("MultiMesh_o3v7q")
 
 [node name="pointsDisplay" type="Node3D" parent="."]
 

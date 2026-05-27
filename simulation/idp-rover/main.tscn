@@ -10,6 +10,8 @@
 [ext_resource type="Script" uid="uid://du06qt43xxwge" path="res://bird_window.gd" id="8_5vw27"]
 
 [sub_resource type="Environment" id="Environment_5vw27"]
+background_mode = 1
+background_color = Color(0.9372549, 0.4117647, 0.16078432, 1)
 adjustment_enabled = true
 adjustment_brightness = 1.06
 adjustment_contrast = 0.95

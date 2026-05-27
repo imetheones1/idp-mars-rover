@@ -125,8 +125,7 @@ func _input(event: InputEvent) -> void:
 
 func reset_rover():
 	terrain_points = []
-	for child in points_display.get_children():
-		child.queue_free()
+	points_mesh.multimesh.instance_count = 0
 	target_one = Vector2.ZERO
 	target_two = Vector2.ZERO
 	cur_state = STATE.DRIVING
@@ -239,28 +238,38 @@ func _process(delta: float) -> void:
 @onready var distance_sensors: Node3D = $distanceSensors
 @onready var front_sensors: Node3D = $frontSensors
 
+var generated_heightmap:HeightmapHolder
+
 var terrain_points: Array[Vector3] = []
-#var terrain_point_times: Array[float] = []
 var new_point_count := 0
 var invalid_point_count := 0
 
-@onready var points_display: Node3D = $pointsDisplay
-const POINT_MARKER = preload("uid://dr0m0cjrp6047")
-
-var generated_heightmap:HeightmapHolder
+@onready var points_mesh: MultiMeshInstance3D = $pointsMesh
 
 var first := true
 func _on_timer_timeout() -> void:
 	new_point_count = 0
-	
-	#for point:Node3D in points_display.get_children():
-		#point.queue_free()
-	
+
 	for sensor: RayCast3D in distance_sensors.get_children():
 		process_sensor(sensor, false)
 		
 	for sensor: RayCast3D in front_sensors.get_children():
 		process_sensor(sensor, true)
+
+	if new_point_count > 0:
+		var mm: MultiMesh = points_mesh.multimesh
+		var total_count := terrain_points.size()
+		
+		mm.instance_count = total_count
+		
+		for i in range(total_count):
+			var xform := Transform3D.IDENTITY
+
+			var display_point := terrain_points[i]
+			display_point.y += 0.05
+			
+			xform.origin = display_point
+			mm.set_instance_transform(i, xform)
 
 	if first or (invalid_point_count >= 100 and cur_state == STATE.FOLLOWING) or invalid_point_count > 500:
 		write_terrain_to_file()
@@ -303,11 +312,6 @@ func process_sensor(sensor: RayCast3D, is_front_sensor: bool) -> void:
 		if is_obstacle:
 			terrain_points.append(collision_point+collision_normal)
 			new_point_count += 1
-		
-		var new:Node3D = POINT_MARKER.instantiate()
-		points_display.add_child(new)
-		new.global_position = collision_point
-		new.top_level = true
 		
 		if not is_obstacle and generated_heightmap != null and generated_heightmap.valid:
 			var generated_height = generated_heightmap.get_height_at_world(collision_point.x, collision_point.z)
