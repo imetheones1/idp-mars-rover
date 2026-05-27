@@ -24,7 +24,7 @@ func _process(delta: float) -> void:
 		
 	bird_window.target_one = rover.target_one
 	bird_window.target_two = rover.target_two
-	bird_window.rover = Vector2(rover.global_position.x,rover.global_position.z)
+	bird_window.rover_node = rover
 
 func _on_freecam_window_close_requested() -> void:
 	get_tree().quit()

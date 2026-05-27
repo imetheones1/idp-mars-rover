@@ -2,7 +2,8 @@ extends Window
 
 @export var target_one: Vector2
 @export var target_two: Vector2
-@export var rover: Vector2
+@export var rover_node: Node3D
+var rover: Vector2
 
 @export var padding: float = 1.15
 @export var smoothing_speed: float = 5.0
@@ -15,17 +16,43 @@ func _ready() -> void:
 	camera_3d.rotation_degrees = Vector3(-90, 0, 0)
 	camera_3d.position = Vector3(0, 50, 0)
 
-
 func _process(delta: float) -> void:
-	var min_pos := Vector2(min(target_one.x, target_two.x), min(target_one.y, target_two.y))
-	var max_pos := Vector2(max(target_one.x, target_two.x), max(target_one.y, target_two.y))
+	rover = Vector2(rover_node.global_position.x, rover_node.global_position.z)
+
+	var target_diff := target_two - target_one
 	
-	min_pos.x = min(min_pos.x, rover.x)
-	min_pos.y = min(min_pos.y, rover.y)
-	max_pos.x = max(max_pos.x, rover.x)
-	max_pos.y = max(max_pos.y, rover.y)
+	var target_angle := -target_diff.angle() + deg_to_rad(45.0)
 	
-	var center_2d := (min_pos + max_pos) / 2.0
+	camera_pivot.rotation.y = rotate_toward(camera_pivot.rotation.y, target_angle, smoothing_speed * delta)
+	
+	var cam_basis := Basis(Vector3.UP, camera_pivot.rotation.y)
+	var cam_basis_inv := cam_basis.inverse()
+
+	var to_local_cam := func(world_pos_2d: Vector2) -> Vector2:
+		var cur_world_3d := Vector3(world_pos_2d.x, 0, world_pos_2d.y)
+		var local_3d := cam_basis_inv * cur_world_3d
+		return Vector2(local_3d.x, local_3d.z)
+
+	var local_points: Array[Vector2] = []
+	local_points.append(to_local_cam.call(target_one))
+	local_points.append(to_local_cam.call(target_two))
+	local_points.append(to_local_cam.call(rover))
+	
+	if "points" in rover_node and rover_node.points != null:
+		for pt3d in rover_node.points:
+			var pt2d := Vector2(pt3d.x, pt3d.z)
+			local_points.append(to_local_cam.call(pt2d))
+			
+	var min_pos := local_points[0]
+	var max_pos := local_points[0]
+	
+	for i in range(1, local_points.size()):
+		min_pos.x = min(min_pos.x, local_points[i].x)
+		min_pos.y = min(min_pos.y, local_points[i].y)
+		max_pos.x = max(max_pos.x, local_points[i].x)
+		max_pos.y = max(max_pos.y, local_points[i].y)
+		
+	var center_local_2d := (min_pos + max_pos) / 2.0
 	var extents := max_pos - min_pos
 
 	var window_size := Vector2(size)
@@ -34,11 +61,11 @@ func _process(delta: float) -> void:
 	var required_size_by_height := extents.y
 	var required_size_by_width := extents.x / aspect_ratio
 	
-	var target_ortho_size:float = max(required_size_by_height, required_size_by_width) * padding
-	
+	var target_ortho_size: float = max(required_size_by_height, required_size_by_width) * padding
 	target_ortho_size = max(target_ortho_size, 5.0) 
 
-	var target_3d_center := Vector3(center_2d.x, 0, center_2d.y)
-	
+	var center_local_3d := Vector3(center_local_2d.x, 0, center_local_2d.y)
+	var target_3d_center := cam_basis * center_local_3d
+
 	camera_pivot.position = camera_pivot.position.lerp(target_3d_center, smoothing_speed * delta)
 	camera_3d.size = lerp(camera_3d.size, target_ortho_size, smoothing_speed * delta)
