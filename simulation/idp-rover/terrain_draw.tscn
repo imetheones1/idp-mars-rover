@@ -1,0 +1,53 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8cqhct0cliy4"]
+
+[ext_resource type="Script" uid="uid://cbfvgm4ies3u3" path="res://terrain_draw.gd" id="1_b6kuq"]
+[ext_resource type="Shader" uid="uid://cd8mhjcldnywa" path="res://red2grayscale.gdshader" id="2_na85o"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yy61g"]
+shader = ExtResource("2_na85o")
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_b6kuq")
+
+[node name="HeightmapDisplay" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_yy61g")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+
+[node name="FinishButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -79.0
+offset_top = 8.0
+offset_right = -13.0
+offset_bottom = 38.0
+grow_horizontal = 0
+text = "finish"
+
+[node name="ResetButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -71.0
+offset_top = 48.0
+offset_right = -14.0
+offset_bottom = 78.0
+grow_horizontal = 0
+text = "Reset"
+
+[connection signal="pressed" from="FinishButton" to="." method="_on_finish_pressed"]
+[connection signal="pressed" from="ResetButton" to="." method="_reset_texture"]

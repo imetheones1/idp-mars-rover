@@ -120,13 +120,17 @@ func _input(event: InputEvent) -> void:
 		elif event.is_action_pressed("reset"):
 			teleport_target = Vector3(0,6,0)
 			teleport = true
-			terrain_points = []
-			for child in points_display.get_children():
-				child.queue_free()
-			target_one = Vector2.ZERO
-			target_two = Vector2.ZERO
 			sleeping = false
-			cur_state = STATE.DRIVING
+			reset_rover()
+
+func reset_rover():
+	terrain_points = []
+	for child in points_display.get_children():
+		child.queue_free()
+	target_one = Vector2.ZERO
+	target_two = Vector2.ZERO
+	cur_state = STATE.DRIVING
+	
 
 @onready var fl: Wheel = $wheels/fl
 @onready var fr: Wheel = $wheels/fr
@@ -170,16 +174,16 @@ func _process(delta: float) -> void:
 		point_indicator.visible = true
 		point_indicator.global_position = points[cur_point]
 		
-		var rover_up = global_transform.basis.y
-		var up_dot = rover_up.dot(Vector3.UP)
-		
-		if up_dot < 0.8:
-			# agressively attempt to stabilize self
-			fl.cur_speed = -10
-			bl.cur_speed = -10
-			fr.cur_speed = -10
-			br.cur_speed = -10
-			return 
+		#var rover_up = global_transform.basis.y
+		#var up_dot = rover_up.dot(Vector3.UP)
+		#
+		#if up_dot < 0.8:
+			## agressively attempt to stabilize self
+			#fl.cur_speed = -10
+			#bl.cur_speed = -10
+			#fr.cur_speed = -10
+			#br.cur_speed = -10
+			#return 
 
 		var target_pos = points[cur_point]
 		var current_pos = global_position 

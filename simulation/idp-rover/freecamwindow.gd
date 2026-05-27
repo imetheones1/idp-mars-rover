@@ -18,6 +18,7 @@ func _input(event: InputEvent) -> void:
 			else:
 				rover.teleport_target = free_look_camera.global_position
 				rover.teleport = true
+				rover.sleeping = false
 		elif event.is_action_pressed("update_terrain"):
 			if ray_cast_3d.is_colliding():
 				var collision_point := ray_cast_3d.get_collision_point()
@@ -33,16 +34,29 @@ func _input(event: InputEvent) -> void:
 				rover.add_target_point(1,collision_point)
 				rover.teleport_target = collision_point + Vector3(0,2,0)
 				rover.teleport = true
+				rover.sleeping = false
 		elif event.is_action_pressed("set_target_2"):
 			if ray_cast_3d.is_colliding():
 				var collision_point := ray_cast_3d.get_collision_point()
 				rover.add_target_point(2,collision_point)
 				rover.teleport_target = collision_point + Vector3(0,2,0)
 				rover.teleport = true
+				rover.sleeping = false
 		elif event.is_action_pressed("follow_path"):
 			if ray_cast_3d.is_colliding():
 				rover.teleport_target = ray_cast_3d.get_collision_point() + Vector3(0,2,0)
 				rover.teleport = true
+				rover.sleeping = false
+		elif event.is_action_pressed("reset"):
+			rover.reset_rover()
+			if ray_cast_3d.is_colliding():
+				rover.teleport_target = ray_cast_3d.get_collision_point() + Vector3(0,2,0)
+				rover.teleport = true
+				rover.sleeping = false
+			else:
+				rover.teleport_target = free_look_camera.global_position
+				rover.teleport = true
+				rover.sleeping = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

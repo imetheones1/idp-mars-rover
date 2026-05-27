@@ -104,11 +104,27 @@ Movement - WASD
 Hold right click to rotate
 Space - Teleport Rover to Camera
 Shift+Space - Teleport Camera to Rover
+R - Reset rover and teleport
 
 Z - Spawn obstacle at crosshair
 1 - Set target one at crosshair
 2 - Set target two at crosshair
 F - Teleport rover to crosshair"
+
+[node name="BirdWindow" type="Window" parent="."]
+oversampling_override = 1.0
+title = "birds eye view"
+initial_position = 1
+size = Vector2i(800, 600)
+script = ExtResource("8_5vw27")
+
+[node name="CameraPivot" type="Node3D" parent="BirdWindow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.990173, 0)
+
+[node name="Camera3D" type="Camera3D" parent="BirdWindow/CameraPivot"]
+cull_mask = 1048573
+environment = SubResource("Environment_5vw27")
+projection = 1
 
 [node name="configuration_window" type="Window" parent="."]
 oversampling_override = 1.0
@@ -189,24 +205,24 @@ offset_bottom = 11.0
 theme_override_font_sizes/font_size = 10
 text = "Rover speed when pathing: 4.0"
 
-[node name="BirdWindow" type="Window" parent="."]
-oversampling_override = 1.0
-title = "birds eye view"
-initial_position = 1
-size = Vector2i(800, 600)
-script = ExtResource("8_5vw27")
-
-[node name="CameraPivot" type="Node3D" parent="BirdWindow"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.990173, 0)
-
-[node name="Camera3D" type="Camera3D" parent="BirdWindow/CameraPivot"]
-cull_mask = 1048573
-environment = SubResource("Environment_5vw27")
-projection = 1
+[node name="Button" type="Button" parent="configuration_window"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -62.0
+offset_top = -40.0
+offset_right = 62.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Draw terrain"
 
 [connection signal="close_requested" from="FreecamWindow" to="." method="_on_freecam_window_close_requested"]
+[connection signal="close_requested" from="BirdWindow" to="." method="_on_bird_window_close_requested"]
 [connection signal="close_requested" from="configuration_window" to="." method="_on_configuration_window_close_requested"]
 [connection signal="value_changed" from="configuration_window/flatness_weight_slider" to="configuration_window" method="_on_flatness_weight_slider_value_changed"]
 [connection signal="value_changed" from="configuration_window/lateral_weight_slider" to="configuration_window" method="_on_lateral_weight_slider_value_changed"]
 [connection signal="value_changed" from="configuration_window/rover_speed_slider" to="configuration_window" method="_on_rover_speed_slider_value_changed"]
-[connection signal="close_requested" from="BirdWindow" to="." method="_on_bird_window_close_requested"]
+[connection signal="pressed" from="configuration_window/Button" to="configuration_window" method="_on_button_pressed"]

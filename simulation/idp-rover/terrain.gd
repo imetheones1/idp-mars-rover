@@ -3,16 +3,15 @@ extends StaticBody3D
 
 @export var update_terrain_button : bool :
 	set(val):
-		update_terrain()
+		var terrain_noise:NoiseTexture2D = load("uid://bk21j4x80m4g2")
+		var heightmap_image := terrain_noise.get_image()
+		heightmap_image.convert(Image.FORMAT_RF)
+		update_terrain(heightmap_image)
 
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
 @onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
 
-func update_terrain():
-	var terrain_noise:NoiseTexture2D = load("uid://bk21j4x80m4g2")
-	var heightmap_image := terrain_noise.get_image()
-	heightmap_image.convert(Image.FORMAT_RF)
-	
+func update_terrain(heightmap_image:Image):
 	var height_min = 0.0
 	var height_max = 10.0
 	
@@ -64,7 +63,7 @@ func update_terrain():
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	Globals.heightmap_created.connect(update_terrain)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

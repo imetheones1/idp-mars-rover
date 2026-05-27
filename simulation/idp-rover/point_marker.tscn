@@ -8,6 +8,7 @@ script = ExtResource("1_3d8qd")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09798057, 0)
+cast_shadow = 0
 billboard = 1
 double_sided = false
 alpha_cut = 1
