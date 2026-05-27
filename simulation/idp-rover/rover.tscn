@@ -679,4 +679,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 material_override = ExtResource("4_ahhn0")
 mesh = SubResource("CylinderMesh_ioov1")
 
+[node name="satellite" type="Node3D" parent="."]
+
+[node name="RayCast3D" type="RayCast3D" parent="satellite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
+target_position = Vector3(0, -200, 0)
+
 [connection signal="timeout" from="distanceTimer" to="." method="_on_timer_timeout"]

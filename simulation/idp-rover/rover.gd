@@ -68,7 +68,7 @@ func _physics_process(delta: float) -> void:
 		if force != Vector3.ZERO:
 			apply_force(force, wheel.global_position - global_position)
 		if flip:
-			apply_force(global_basis.y * 10 * sign(wheel.position.x), wheel.global_position - global_position)
+			apply_force(wheel.global_basis.y * 10 * sign(wheel.position.x), wheel.global_position - global_position)
 	if flip:
 		apply_force(Vector3.UP * 100,Vector3.ZERO)
 		
@@ -101,6 +101,9 @@ func _ready() -> void:
 		xform.origin += direction * (display_lidar_length / 2.0)
 		mm.set_instance_transform(i, xform)
 		i+=1
+		
+const satellite_size := 25
+const satellite_scale := 3.0
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey:
@@ -122,6 +125,34 @@ func _input(event: InputEvent) -> void:
 			teleport = true
 			sleeping = false
 			reset_rover()
+		elif event.is_action_pressed("sattelite"):
+			print("simulating sattelite")
+			$satellite.global_position = global_position
+			var satellite_ray: RayCast3D = $satellite/RayCast3D
+			for x in range(-satellite_size,satellite_size+1):
+				satellite_ray.position.x = x*satellite_scale
+				for z in range(-satellite_size,satellite_size+1):
+					if Vector2(x*satellite_scale,z*satellite_scale).length_squared() > satellite_size*satellite_size:
+						continue
+					satellite_ray.position.z = z*satellite_scale
+					satellite_ray.force_update_transform()
+					satellite_ray.force_raycast_update()
+					if satellite_ray.is_colliding():
+						terrain_points.append(satellite_ray.get_collision_point())
+			print("sattelite simulation finished")
+			var mm: MultiMesh = points_mesh.multimesh
+			var total_count := terrain_points.size()
+			
+			mm.instance_count = total_count
+			
+			for i in range(total_count):
+				var xform := Transform3D.IDENTITY
+
+				var display_point := terrain_points[i]
+				display_point.y += 0.05
+				
+				xform.origin = display_point
+				mm.set_instance_transform(i, xform)
 
 func reset_rover():
 	terrain_points = []
@@ -330,7 +361,7 @@ func write_terrain_to_file():
 	if delay_timer.time_left > 0:
 		return
 	delay_timer.start()
-	print_debug("\nbeginning everything")
+	print_debug("\nbeginning pathfinding")
 	var app_dir = "user://vertices.txt"
 	var file := FileAccess.open(app_dir,FileAccess.WRITE)
 	var cur_string := ""

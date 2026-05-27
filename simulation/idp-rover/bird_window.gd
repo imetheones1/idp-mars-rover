@@ -39,7 +39,7 @@ func _process(delta: float) -> void:
 	local_points.append(to_local_cam.call(rover))
 	
 	if "points" in rover_node and rover_node.points != null:
-		for pt3d in rover_node.points:
+		for pt3d:Vector3 in rover_node.points:
 			var pt2d := Vector2(pt3d.x, pt3d.z)
 			local_points.append(to_local_cam.call(pt2d))
 			
