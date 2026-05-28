@@ -31,6 +31,7 @@ var cur_target:Vector2
 
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	if teleport:
+		print("teleporting")
 		sleeping = false
 		var new_transform := state.transform
 		new_transform.origin = teleport_target
@@ -289,6 +290,8 @@ var invalid_point_count := 0
 
 @onready var points_mesh: MultiMeshInstance3D = $pointsMesh
 
+signal updated_points()
+
 var first := true
 func _on_timer_timeout() -> void:
 	new_point_count = 0
@@ -317,6 +320,8 @@ func _on_timer_timeout() -> void:
 	if first or (invalid_point_count >= 100 and cur_state == STATE.FOLLOWING) or invalid_point_count > 500:
 		write_terrain_to_file()
 	first = false
+	
+	updated_points.emit()
 
 func process_sensor(sensor: RayCast3D, is_front_sensor: bool) -> void:
 	sensor.enabled = true

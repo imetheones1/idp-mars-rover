@@ -133,7 +133,7 @@ projection = 1
 oversampling_override = 1.0
 title = "config"
 initial_position = 1
-size = Vector2i(400, 200)
+size = Vector2i(400, 300)
 sharp_corners = true
 script = ExtResource("5_lquwl")
 
@@ -160,19 +160,18 @@ value = 5.0
 [node name="Label" type="Label" parent="configuration_window/flatness_weight_slider"]
 layout_mode = 0
 offset_left = 4.0
-offset_top = -12.0
-offset_right = 136.0
-offset_bottom = 11.0
-theme_override_font_sizes/font_size = 10
+offset_top = -19.0
+offset_right = 312.0
+offset_bottom = 4.0
 text = "Pathfinding flatness weight: 5.0"
 
 [node name="lateral_weight_slider" type="HSlider" parent="configuration_window"]
 anchors_preset = 10
 anchor_right = 1.0
 offset_left = -1.0
-offset_top = 50.0
+offset_top = 66.0
 offset_right = -1.0
-offset_bottom = 66.0
+offset_bottom = 82.0
 grow_horizontal = 2
 max_value = 30.0
 step = 0.25
@@ -180,20 +179,17 @@ value = 10.0
 
 [node name="Label" type="Label" parent="configuration_window/lateral_weight_slider"]
 layout_mode = 0
-offset_left = 4.0
-offset_top = -12.0
-offset_right = 136.0
-offset_bottom = 11.0
-theme_override_font_sizes/font_size = 10
+offset_left = 3.0
+offset_top = -17.0
+offset_right = 311.0
+offset_bottom = 6.0
 text = "Pathfinding lateral weight: 10.0"
 
 [node name="rover_speed_slider" type="HSlider" parent="configuration_window"]
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = -2.0
-offset_top = 82.0
-offset_right = -2.0
-offset_bottom = 98.0
+offset_top = 111.0
+offset_bottom = 127.0
 grow_horizontal = 2
 max_value = 10.0
 step = 0.5
@@ -202,10 +198,9 @@ value = 4.0
 [node name="Label" type="Label" parent="configuration_window/rover_speed_slider"]
 layout_mode = 0
 offset_left = 4.0
-offset_top = -12.0
-offset_right = 136.0
-offset_bottom = 11.0
-theme_override_font_sizes/font_size = 10
+offset_top = -18.0
+offset_right = 283.0
+offset_bottom = 5.0
 text = "Rover speed when pathing: 4.0"
 
 [node name="Button" type="Button" parent="configuration_window"]
@@ -222,6 +217,68 @@ grow_horizontal = 2
 grow_vertical = 0
 text = "Draw terrain"
 
+[node name="InfoButton" type="Button" parent="configuration_window"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -63.0
+offset_top = -73.0
+offset_right = 61.0
+offset_bottom = -43.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Info
+"
+
+[node name="PathButton" type="Button" parent="configuration_window"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -153.0
+offset_right = 60.0
+offset_bottom = -79.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Generate 
+random 
+endpoints"
+
+[node name="InfoWindow" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Info"
+initial_position = 2
+size = Vector2i(400, 500)
+visible = false
+popup_window = true
+
+[node name="ColorRect" type="ColorRect" parent="InfoWindow"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.39407006, 0.18824631, 0.19593155, 1)
+
+[node name="Label" type="Label" parent="InfoWindow"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "This is a simulation of the automatic navigation system our rovers will be equipped with.
+
+Simply put, the rovers scan their surroundings, create a map of where they are, and decide the most optimal path.
+
+The rover is capable of figuring out a path thats both short and safe, as well as navigate around obstacles that it may come across.
+
+There are currently two values you can edit: flatness weight (how much it should prioritize terrain that is flat moving forward) and lateral weight (how much it should prioritize terrain that is flat side to side)."
+autowrap_mode = 3
+
 [connection signal="close_requested" from="FreecamWindow" to="." method="_on_freecam_window_close_requested"]
 [connection signal="close_requested" from="BirdWindow" to="." method="_on_bird_window_close_requested"]
 [connection signal="close_requested" from="configuration_window" to="." method="_on_configuration_window_close_requested"]
@@ -229,3 +286,6 @@ text = "Draw terrain"
 [connection signal="value_changed" from="configuration_window/lateral_weight_slider" to="configuration_window" method="_on_lateral_weight_slider_value_changed"]
 [connection signal="value_changed" from="configuration_window/rover_speed_slider" to="configuration_window" method="_on_rover_speed_slider_value_changed"]
 [connection signal="pressed" from="configuration_window/Button" to="configuration_window" method="_on_button_pressed"]
+[connection signal="pressed" from="configuration_window/InfoButton" to="configuration_window" method="_on_info_button_pressed"]
+[connection signal="pressed" from="configuration_window/PathButton" to="3d/SubViewportContainer/SubViewport/world" method="generate_random_rover_points"]
+[connection signal="close_requested" from="InfoWindow" to="configuration_window" method="_on_info_window_close_requested"]
