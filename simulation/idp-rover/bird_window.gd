@@ -10,7 +10,10 @@ var rover: Vector2
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var camera_3d: Camera3D = $CameraPivot/Camera3D
+@onready var terrain_cast: RayCast3D = $terrain_cast
 
+@onready var obstacles: Node3D = $obstacles
+const OBSTACLE = preload("uid://b7kh7fx0nc4id")
 
 func _ready() -> void:
 	camera_3d.rotation_degrees = Vector3(-90, 0, 0)
@@ -69,3 +72,23 @@ func _process(delta: float) -> void:
 
 	camera_pivot.position = camera_pivot.position.lerp(target_3d_center, smoothing_speed * delta)
 	camera_3d.size = lerp(camera_3d.size, target_ortho_size, smoothing_speed * delta)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.is_action_pressed("update_terrain"):
+			var mouse_pos := get_mouse_position()
+
+			var ray_origin := camera_3d.project_ray_origin(mouse_pos)
+			var ray_dir := camera_3d.project_ray_normal(mouse_pos)
+
+			terrain_cast.global_position = ray_origin
+			terrain_cast.target_position = ray_dir * 1000.0
+			terrain_cast.force_raycast_update()
+
+			if terrain_cast.is_colliding():
+				var hit_pos := terrain_cast.get_collision_point()
+
+				var obstacle := OBSTACLE.instantiate()
+				obstacle.global_position = hit_pos
+
+				obstacles.add_child(obstacle)

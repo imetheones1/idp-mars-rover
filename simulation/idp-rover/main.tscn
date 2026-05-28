@@ -55,11 +55,11 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Controls:
 WASD - Move rover
 Z - Generate path
-F - Follow path
+F - Toggle driving/following
 Space - Flip rover
 1 - Set first position
 2 - Set second position
-R - Reset rover position and terrain
+R - Reset rover position and maps
 X - Simulate satellite"
 horizontal_alignment = 2
 
@@ -107,7 +107,7 @@ Movement - WASD
 Hold right click to rotate
 Space - Teleport Rover to Camera
 Shift+Space - Teleport Camera to Rover
-R - Reset rover and teleport
+R - Reset rover and teleport rover to crosshair
 
 Z - Spawn obstacle at crosshair
 1 - Set target one at crosshair
@@ -128,6 +128,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.990173, 0)
 cull_mask = 1048573
 environment = SubResource("Environment_5vw27")
 projection = 1
+
+[node name="obstacles" type="Node3D" parent="BirdWindow"]
+
+[node name="terrain_cast" type="RayCast3D" parent="BirdWindow"]
+target_position = Vector3(0, -100, 0)
+
+[node name="Label" type="Label" parent="BirdWindow"]
+offset_right = 40.0
+offset_bottom = 22.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Controls:
+
+Z - Place obstacle at cursor"
 
 [node name="configuration_window" type="Window" parent="."]
 oversampling_override = 1.0
@@ -252,8 +265,7 @@ endpoints"
 oversampling_override = 1.0
 title = "Info"
 initial_position = 2
-size = Vector2i(400, 500)
-visible = false
+size = Vector2i(600, 600)
 popup_window = true
 
 [node name="ColorRect" type="ColorRect" parent="InfoWindow"]
@@ -276,7 +288,11 @@ Simply put, the rovers scan their surroundings, create a map of where they are, 
 
 The rover is capable of figuring out a path thats both short and safe, as well as navigate around obstacles that it may come across.
 
-There are currently two values you can edit: flatness weight (how much it should prioritize terrain that is flat moving forward) and lateral weight (how much it should prioritize terrain that is flat side to side)."
+There are currently two values you can edit: flatness weight (how much it should prioritize terrain that is flat moving forward) and lateral weight (how much it should prioritize terrain that is flat side to side).
+
+Controls are listed on their respective screens. More detail about some of them:
+ - Simulate sattelite: Simulates what it would be like for the rover to sample information about its surroundings that could be gathered by satelites; scans a large area surrounding the rover
+ - Rover has two modes: driving and following. In driving mode, you can control it with WASD or arrow keys. In following mode, it tries to follow the generated path."
 autowrap_mode = 3
 
 [connection signal="close_requested" from="FreecamWindow" to="." method="_on_freecam_window_close_requested"]
