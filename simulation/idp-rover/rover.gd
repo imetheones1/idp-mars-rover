@@ -102,7 +102,7 @@ func _ready() -> void:
 		mm.set_instance_transform(i, xform)
 		i+=1
 		
-const satellite_size := 25
+const satellite_size := 30
 const satellite_scale := 3.0
 
 func _input(event: InputEvent) -> void:
@@ -132,7 +132,7 @@ func _input(event: InputEvent) -> void:
 			for x in range(-satellite_size,satellite_size+1):
 				satellite_ray.position.x = x*satellite_scale
 				for z in range(-satellite_size,satellite_size+1):
-					if Vector2(x*satellite_scale,z*satellite_scale).length_squared() > satellite_size*satellite_size:
+					if Vector2(x*satellite_scale,z*satellite_scale).length_squared() > satellite_size*satellite_size*satellite_scale*satellite_scale:
 						continue
 					satellite_ray.position.z = z*satellite_scale
 					satellite_ray.force_update_transform()
