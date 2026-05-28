@@ -297,7 +297,7 @@ func _on_timer_timeout() -> void:
 		process_sensor(sensor, false)
 		
 	for sensor: RayCast3D in front_sensors.get_children():
-		process_sensor(sensor, true)
+		process_sensor(sensor, false)
 
 	if new_point_count > 0:
 		var mm: MultiMesh = points_mesh.multimesh
@@ -394,14 +394,28 @@ func write_terrain_to_file():
 		var dist_to_start = start_2d.distance_squared_to(vertex_2d)
 		var dist_to_target = target_2d.distance_squared_to(vertex_2d)
 		
-		if dist_to_start <= radius_endpoints*radius_endpoints or dist_to_target <= radius_endpoints*radius_endpoints:
-			pass 
+		var is_valid_vertex = false
+		
+		if not has_path or dist_to_start <= radius_endpoints*radius_endpoints or dist_to_target <= radius_endpoints*radius_endpoints:
+			is_valid_vertex = true
 		else:
 			var closest_point = Geometry2D.get_closest_point_to_segment(vertex_2d, start_2d, target_2d)
 			var dist_to_path = vertex_2d.distance_squared_to(closest_point)
 			
-			if dist_to_path > radius_path*radius_path:
-				continue
+			if dist_to_path <= radius_path*radius_path:
+				is_valid_vertex = true
+			else:
+				for i in range(cur_point, points.size() - 1):
+					var seg_start_2d = Vector2(points[i].x, points[i].z)
+					var seg_end_2d = Vector2(points[i + 1].x, points[i + 1].z)
+					
+					var closest_p = Geometry2D.get_closest_point_to_segment(vertex_2d, seg_start_2d, seg_end_2d)
+					if vertex_2d.distance_squared_to(closest_p) <= radius_path * radius_path:
+						is_valid_vertex = true
+						break
+
+		if not is_valid_vertex:
+			continue
 		
 		var sx = "-" if vertex.x < 0 else "0"
 		var sy = "-" if vertex.y < 0 else "0"
@@ -412,8 +426,8 @@ func write_terrain_to_file():
 			sy, abs(vertex.y), 
 			sz, abs(vertex.z)
 		])
-		
-		vertex_count += 1
+	
+	vertex_count += 1
 
 	var vertex_file_path = file.get_path_absolute()
 	file.close()
