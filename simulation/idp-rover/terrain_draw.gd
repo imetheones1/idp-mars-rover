@@ -12,7 +12,7 @@ var is_drawing: bool = false
 var draw_mode: int = 1
 
 var brush_radius: float = 30.0
-var brush_strength: float = 3
+var brush_strength: float = 2
 
 func _ready() -> void:
 	heightmap_image = Image.create(MAP_SIZE.x, MAP_SIZE.y, false, Image.FORMAT_RF)
@@ -37,29 +37,22 @@ func _input(event: InputEvent) -> void:
 			is_drawing = event.pressed
 			draw_mode = -1
 
-# Calculates where the mouse is pointing relative to the actual centered/scaled texture data
 func _get_texture_pixel_pos() -> Vector2:
 	var mouse_pos = display_rect.get_local_mouse_position()
 	var rect_size = display_rect.size
 	var tex_size = Vector2(MAP_SIZE)
 	
-	# 1. Determine the scale factor used to fit the texture inside the TextureRect
 	var scale_factor = min(rect_size.x / tex_size.x, rect_size.y / tex_size.y)
 	
-	# 2. Find the actual size of the texture as displayed on screen
 	var displayed_tex_size = tex_size * scale_factor
 	
-	# 3. Find the top-left offset (the margins created by centering)
 	var offset = (rect_size - displayed_tex_size) / 2.0
-	
-	# 4. Adjust the mouse position relative to the actual texture's top-left corner
+
 	var relative_mouse_pos = mouse_pos - offset
 	
-	# 5. Check if the mouse is outside the actual drawn texture boundaries
 	if relative_mouse_pos.x < 0 or relative_mouse_pos.y < 0 or relative_mouse_pos.x > displayed_tex_size.x or relative_mouse_pos.y > displayed_tex_size.y:
-		return Vector2(-1, -1) # Invalid position (mouse is in the empty margins)
+		return Vector2(-1, -1)
 		
-	# 6. Map the position back to the raw image pixels (0 to 512)
 	return (relative_mouse_pos / displayed_tex_size) * tex_size
 
 func _apply_brush(center: Vector2, delta: float) -> void:

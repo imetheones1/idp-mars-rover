@@ -138,7 +138,14 @@ func _input(event: InputEvent) -> void:
 					satellite_ray.force_update_transform()
 					satellite_ray.force_raycast_update()
 					if satellite_ray.is_colliding():
-						terrain_points.append(satellite_ray.get_collision_point())
+						var collision_point := satellite_ray.get_collision_point()
+						var valid := true
+						for point: Vector3 in terrain_points:
+							if (point - collision_point).length_squared() < satellite_scale*satellite_scale:
+								valid = false
+								break
+						if valid:
+							terrain_points.append(collision_point)
 			print("sattelite simulation finished")
 			var mm: MultiMesh = points_mesh.multimesh
 			var total_count := terrain_points.size()
@@ -201,6 +208,11 @@ func _process(delta: float) -> void:
 			write_terrain_to_file()
 			#cur_state = STATE.DRIVING
 			return
+		
+		if global_position.distance_squared_to(previous_update_position) > 30*30:
+			write_terrain_to_file()
+			return
+		
 		point_indicator.visible = true
 		point_indicator.global_position = points[cur_point]
 		
@@ -333,7 +345,7 @@ func process_sensor(sensor: RayCast3D, is_front_sensor: bool) -> void:
 	var point: Vector3
 	for point_i: int in terrain_points.size():
 		point = terrain_points[-point_i - 1]
-		if (point - collision_point).length_squared() < 1:
+		if (point - collision_point).length_squared() < 1.5*1.5:
 			valid = false
 			break
 			
@@ -357,30 +369,56 @@ func process_sensor(sensor: RayCast3D, is_front_sensor: bool) -> void:
 
 var has_path := false
 
+const radius_endpoints: float = 50.0
+const radius_path: float = 30.0
+
+var previous_update_position := global_position
 func write_terrain_to_file():
 	if delay_timer.time_left > 0:
 		return
 	delay_timer.start()
 	print_debug("\nbeginning pathfinding")
 	var app_dir = "user://vertices.txt"
-	var file := FileAccess.open(app_dir,FileAccess.WRITE)
-	var cur_string := ""
-	var line_length = 0
+	var file := FileAccess.open(app_dir, FileAccess.WRITE)
+	if not file: 
+		push_error("failed to open file")
+		return
+	print("writing vertices...")
+	var start_2d := Vector2(global_position.x, global_position.z)
+	var target_2d := cur_target
+	print("writing vertices...")
+	var vertex_count := 0
 	for vertex: Vector3 in terrain_points:
-		var x_str = ("-%015.10f" % abs(vertex.x)) if vertex.x < 0 else ("0%015.10f" % vertex.x)
-		var y_str = ("-%015.10f" % abs(vertex.y)) if vertex.y < 0 else ("0%015.10f" % vertex.y)
-		var z_str = ("-%015.10f" % abs(vertex.z)) if vertex.z < 0 else ("0%015.10f" % vertex.z)
-		var line = "%s,%s,%s\n" % [x_str, y_str, z_str]
-		cur_string += line
-		if line_length == 0:
-			line_length = line.length()
-		elif line.length() != line_length:
-			print_debug("lines are different sizes!")
-	file.store_string(cur_string)
+		var vertex_2d := Vector2(vertex.x, vertex.z)
+		
+		var dist_to_start = start_2d.distance_squared_to(vertex_2d)
+		var dist_to_target = target_2d.distance_squared_to(vertex_2d)
+		
+		if dist_to_start <= radius_endpoints*radius_endpoints or dist_to_target <= radius_endpoints*radius_endpoints:
+			pass 
+		else:
+			var closest_point = Geometry2D.get_closest_point_to_segment(vertex_2d, start_2d, target_2d)
+			var dist_to_path = vertex_2d.distance_squared_to(closest_point)
+			
+			if dist_to_path > radius_path*radius_path:
+				continue
+		
+		var sx = "-" if vertex.x < 0 else "0"
+		var sy = "-" if vertex.y < 0 else "0"
+		var sz = "-" if vertex.z < 0 else "0"
+		
+		file.store_string("%s%015.10f,%s%015.10f,%s%015.10f\n" % [
+			sx, abs(vertex.x), 
+			sy, abs(vertex.y), 
+			sz, abs(vertex.z)
+		])
+		
+		vertex_count += 1
+
 	var vertex_file_path = file.get_path_absolute()
 	file.close()
 	print("path: "+vertex_file_path)
-	print("line length: "+str(line_length))
+	print("vertex count: "+str(vertex_count))
 	var temp_file := FileAccess.open("user://heightmap.roverheightmap",FileAccess.WRITE)
 	var heightmap_path := temp_file.get_path_absolute()
 	temp_file.close()
@@ -463,6 +501,8 @@ func write_terrain_to_file():
 			push_warning("Skipping malformed line: " + line)
 			
 	path_file.close()
+	
+	previous_update_position = global_position
 	
 	cur_point = 0
 	print()
