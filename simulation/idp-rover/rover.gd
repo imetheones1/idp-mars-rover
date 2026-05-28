@@ -393,42 +393,61 @@ func write_terrain_to_file():
 	var target_2d := cur_target
 	print("writing vertices...")
 	var vertex_count := 0
+	const radius_endpoints_sq = radius_endpoints * radius_endpoints
+	const radius_path_sq = radius_path * radius_path
+
+	var path_polygon: PackedVector2Array = []
+	for p in points:
+		path_polygon.append(Vector2(p.x, p.z))
+
+
 	for vertex: Vector3 in terrain_points:
 		var vertex_2d := Vector2(vertex.x, vertex.z)
-		
-		var dist_to_start = start_2d.distance_squared_to(vertex_2d)
-		var dist_to_target = target_2d.distance_squared_to(vertex_2d)
-		
-		var is_valid_vertex = false
-		
-		if not has_path or dist_to_start <= radius_endpoints*radius_endpoints or dist_to_target <= radius_endpoints*radius_endpoints:
+
+		var is_valid_vertex := false
+
+		if not has_path:
 			is_valid_vertex = true
 		else:
-			var closest_point = Geometry2D.get_closest_point_to_segment(vertex_2d, start_2d, target_2d)
-			var dist_to_path = vertex_2d.distance_squared_to(closest_point)
-			
-			if dist_to_path <= radius_path*radius_path:
+			var dist_to_start = start_2d.distance_squared_to(vertex_2d)
+
+			if dist_to_start <= radius_endpoints_sq:
 				is_valid_vertex = true
 			else:
-				for i in range(cur_point, points.size() - 1):
-					var seg_start_2d = Vector2(points[i].x, points[i].z)
-					var seg_end_2d = Vector2(points[i + 1].x, points[i + 1].z)
-					
-					var closest_p = Geometry2D.get_closest_point_to_segment(vertex_2d, seg_start_2d, seg_end_2d)
-					if vertex_2d.distance_squared_to(closest_p) <= radius_path * radius_path:
-						is_valid_vertex = true
-						break
+				var dist_to_target = target_2d.distance_squared_to(vertex_2d)
+
+				if dist_to_target <= radius_endpoints_sq:
+					is_valid_vertex = true
+
+		if not is_valid_vertex:
+			for i in range(cur_point, points.size() - 1):
+				var seg_start_2d = Vector2(points[i].x, points[i].z)
+				var seg_end_2d = Vector2(points[i + 1].x, points[i + 1].z)
+
+				var closest_p = Geometry2D.get_closest_point_to_segment(
+					vertex_2d,
+					seg_start_2d,
+					seg_end_2d
+				)
+
+				if vertex_2d.distance_squared_to(closest_p) <= radius_path_sq:
+					is_valid_vertex = true
+					break
+
+		if not is_valid_vertex and path_polygon.size() >= 3:
+			if Geometry2D.is_point_in_polygon(vertex_2d, path_polygon):
+				is_valid_vertex = true
 
 		if not is_valid_vertex:
 			continue
-		
+
 		var sx = "-" if vertex.x < 0 else "0"
 		var sy = "-" if vertex.y < 0 else "0"
 		var sz = "-" if vertex.z < 0 else "0"
-		
+
 		file.store_string("%s%015.10f,%s%015.10f,%s%015.10f\n" % [
-			sx, abs(vertex.x), 
-			sy, abs(vertex.y), 
+			sx, abs(vertex.x),
+			sy, abs(vertex.y),
 			sz, abs(vertex.z)
 		])
 	
