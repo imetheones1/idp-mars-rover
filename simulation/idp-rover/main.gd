@@ -19,6 +19,12 @@ func _process(delta: float) -> void:
 	main_label.text+= "vertex count: %d\n" % len(rover.terrain_points)
 	main_label.text+= "new vertices: %d\n" % rover.new_point_count
 	main_label.text+= "invalid vertices: %d\n" % rover.invalid_point_count
+	main_label.text+= "Rover state: "
+	if rover.cur_state == rover.STATE.DRIVING:
+		main_label.text+= "Driving"
+	elif rover.cur_state == rover.STATE.FOLLOWING:
+		main_label.text+= "Following"
+	main_label.text+= "\n"
 	if !rover.has_path:
 		main_label.text+= "ERROR: Rover cannot find path. \nPlease manually route to target or attempt to regenerate."
 		

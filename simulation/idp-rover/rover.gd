@@ -46,6 +46,7 @@ func update_target():
 		cur_target = target_one
 	else:
 		cur_target = target_two
+	has_path = false
 
 signal target_one_change(newval:Vector2)
 signal target_two_change(newval:Vector2)

@@ -139,8 +139,8 @@ offset_right = 40.0
 offset_bottom = 22.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Controls:
-
-Z - Place obstacle at cursor"
+Z - Place obstacle at cursor
+F - Teleport rover to cursor"
 
 [node name="configuration_window" type="Window" parent="."]
 oversampling_override = 1.0
